@@ -1,8 +1,17 @@
-/* EMACS_MODES: !fill,tabstop=4,c */
 /*
  * Hero movement commands
  *
  * @(#)move.c	9.0	(rdk)	 7/17/84
+ *
+ * Super-Rogue
+ * Copyright (C) 1984 Robert D. Kindelberger
+ * All rights reserved.
+ *
+ * Based on "Rogue: Exploring the Dungeons of Doom"
+ * Copyright (C) 1980, 1981 Michael Toy, Ken Arnold and Glenn Wichman
+ * All rights reserved.
+ *
+ * See the file LICENSE.TXT for full copyright and licensing information.
  */
 
 #include <ctype.h>
@@ -495,14 +504,14 @@ goner:
 				}
 				else if(rnd(100) < 6 && pl_off(ISINVINC)) {
 					msg("Oh no!!! You drown in the pool!!! --More--");
-					wait_for(' ');
+					wait_for(cw, ' ');
 					death(K_POOL);
 				}
 				else
 					 nlmove = FALSE;
 		}
 	}
-	flushout();		/* flush typeahead */
+	flushinp();		/* flush typeahead */
 	return ch;
 }
 
