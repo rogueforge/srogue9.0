@@ -129,9 +129,9 @@ struct thing *mp;
 	reg char *mname;
 
 	if (pl_on(ISETHER))		/* ethereal players cant be hit */
-		return;
+		return(0);
 	if (mp->t_flags & ISPARA)	/* paralyzed monsters */
-		return;
+		return(0);
 	running = FALSE;
 	quiet = 0;
 	isfight = TRUE;
@@ -214,7 +214,10 @@ struct thing *mp;
 						msg("Your purse feels lighter.");
 					lep = find_mons(mp->t_pos.y,mp->t_pos.x);
 					if (lep != NULL)
+					{
 						remove_monster(&mp->t_pos, lep);
+						mp = NULL;
+					}
 				}
 				when 'N': {
 					struct linked_list *steal, *list;
@@ -241,7 +244,10 @@ struct thing *mp;
 
 							nym = find_mons(mp->t_pos.y, mp->t_pos.x);
 							if (nym != NULL)
+							{
 								remove_monster(&mp->t_pos, nym);
+								mp = NULL;
+							}
 							msg("She stole %s!", inv_name(sobj, TRUE));
 							detach(pack, steal);
 							discard(steal);
@@ -254,7 +260,7 @@ struct thing *mp;
 					if (!save(VS_PETRIFICATION)) {
 						msg("Your body begins to solidify.");
 						msg("You are turned to stone !!! --More--");
-						wait_for(' ');
+						wait_for(cw, ' ');
 						death(mp->t_indx);
 					}
 				when 'd':
@@ -329,8 +335,13 @@ struct thing *mp;
 		}
 		miss(mname);
 	}
-	flush_type();					/* flush type ahead */
+	flushinp();					/* flush type ahead */
 	count = 0;
+
+	if (mp == NULL)
+		return(-1);
+	else
+		return(0);
 }
 
 
@@ -407,7 +418,7 @@ bool hurl;
 		 */
 		if (weap->o_type == STICK && weap->o_which == WS_HIT
 		  && weap->o_charges == 0) {
-			weap->o_damage = "0d0";
+			strcpy(weap->o_damage, "0d0");
 			weap->o_hplus = weap->o_dplus = 0;
 		}
     }
