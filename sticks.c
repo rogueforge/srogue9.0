@@ -30,28 +30,28 @@ struct object *cur;
 
 	cur->o_type = STICK;
 	cur->o_charges = 4 + rnd(5);
-	cur->o_hurldmg = "1d1";
+	strcpy(cur->o_hurldmg, "1d1");
 	rd = &ws_stuff[cur->o_which];
 	cur->o_weight = rd->ws_wght;
 	cur->o_vol = rd->ws_vol;
 	if (strcmp(rd->ws_type, "staff") == 0) {
-		cur->o_damage = "2d3";
+		strcpy(cur->o_damage, "2d3");
 		cur->o_charges += rnd(5) + 3;
 	}
 	else {
-		cur->o_damage = "1d1";
+		strcpy(cur->o_damage, "1d1");
 	}
 	switch (cur->o_which) {
 		case WS_HIT:
 			if(rnd(100) < 15) {
 				cur->o_hplus = 9;
 				cur->o_dplus = 9;
-				cur->o_damage = "3d8";
+				strcpy(cur->o_damage,"3d8");
 			}
 			else {
 				cur->o_hplus = 3;
 				cur->o_dplus = 3;
-				cur->o_damage = "1d8";
+				strcpy(cur->o_damage,"1d8");
 			}
 		when WS_LIGHT:
 			cur->o_charges += 7 + rnd(9);
@@ -280,9 +280,9 @@ bool gotdir;
 		};
 
 		if (curse)
-			bolt.o_hurldmg = "3d3";
+			strcpy(bolt.o_hurldmg,"3d3");
 		else if (bless)
-			bolt.o_hurldmg = "9d9";
+			strcpy(bolt.o_hurldmg,"9d9");
 		ws_know[WS_MISSILE] = TRUE;
 		do_motion(&bolt, delta.y, delta.x);
 		whe = &bolt.o_pos;
@@ -310,11 +310,11 @@ bool gotdir;
 		delta.x += hero.x;
 		ch = winat(delta.y, delta.x);
 		if (curse) {				/* decrease for cursed */
-			obj->o_damage = "1d1";
+			strcpy(obj->o_damage,"1d1");
 			obj->o_hplus = obj->o_dplus = 0;
 		}
 		else if (bless) {			/* increase for blessed */
-			obj->o_damage = "5d8";
+			strcpy(obj->o_damage,"5d8");
 			obj->o_hplus = obj->o_dplus = 12;
 		}
 		if (isalpha(ch))
@@ -396,11 +396,11 @@ bool gotdir;
 
 		boltlen = BOLT_LENGTH;
 		if (curse) {
-			bolt.o_hurldmg = "3d3";
+			strcpy(bolt.o_hurldmg,"3d3");
 			boltlen -= 3;
 		}
 		else if (bless) {
-			bolt.o_hurldmg = "9d9";
+			strcpy(bolt.o_hurldmg,"9d9");
 			boltlen += 3;
 		}
 		switch (delta.y + delta.x) {
