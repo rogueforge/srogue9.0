@@ -2216,6 +2216,8 @@ rs_save_file(FILE *savef)
     rs_write_window(savef, mw);
     rs_write_window(savef, stdscr);
 
+    fflush(savef);
+
     return(WRITESTAT);
 }
 
