@@ -1,8 +1,17 @@
-/* EMACS_MODES: !fill,tabstop=4,c */
 /*
  * routines dealing specifically with rings
  *
  * @(#)rings.c	9.0	(rdk)	 7/17/84
+ *
+ * Super-Rogue
+ * Copyright (C) 1984 Robert D. Kindelberger
+ * All rights reserved.
+ *
+ * Based on "Rogue: Exploring the Dungeons of Doom"
+ * Copyright (C) 1980, 1981 Michael Toy, Ken Arnold and Glenn Wichman
+ * All rights reserved.
+ *
+ * See the file LICENSE.TXT for full copyright and licensing information.
  */
 
 #include "rogue.h"
@@ -110,7 +119,7 @@ ring_on()
 		}
 	}
 	if (r_know[wh] && r_guess[wh]) {
-		cfree(r_guess[wh]);
+		free(r_guess[wh]);
 		r_guess[wh] = NULL;
 	}
 	else if(!r_know[wh] && r_guess[wh] == NULL) {
@@ -329,7 +338,7 @@ struct object *what;
 {
 	static char number[5];
 
-	number[0] = NULL;
+	number[0] = '\0';
 	if (o_on(what,ISKNOW) || o_on(what,ISPOST)) {
 		if (magring(what)) {	/* only rings with numbers */
 			number[0] = ' ';

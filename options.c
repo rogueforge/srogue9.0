@@ -1,14 +1,25 @@
-/* EMACS_MODES: !fill,tabstop=4 */
 /*
  * This file has all the code for the option command.
  *
  * @(#)options.c	9.0	(rdk)	 7/17/84
  *
+ * Super-Rogue
+ * Copyright (C) 1984 Robert D. Kindelberger
+ * All rights reserved.
+ *
+ * Based on "Rogue: Exploring the Dungeons of Doom"
+ * Copyright (C) 1980, 1981 Michael Toy, Ken Arnold and Glenn Wichman
+ * All rights reserved.
+ *
+ * See the file LICENSE.TXT for full copyright and licensing information.
  */
 
+#include <termios.h>
 #include <ctype.h>
 #include "rogue.h"
 #include "rogue.ext"
+
+extern struct termios terminal;
 
 /*
  * description of an option and what to do with it
@@ -58,7 +69,7 @@ option()
 			if (wh == QUIT)
 				break;
 			else if (op > optlist) {
-				wmove(hw, op - optlist);
+				wmove(hw, op - optlist, 0);
 				op -= 2;
 			}
 			else {
@@ -98,7 +109,7 @@ WINDOW *awin;
 	for (sp = buf; (c=readchar()) != '\n' && c != '\r' && c != ESCAPE;
 	  wclrtoeol(awin), draw(awin)) {
 		if (( (int)sp - (int)buf ) >= 50) {
-			*sp = NULL;			/* line was too long */
+			*sp = '\0';			/* line was too long */
 			strucpy(opt,buf,strlen(buf));
 			mvwaddstr(awin, 0, 0, "Name was truncated --More--");
 			wclrtoeol(awin);
@@ -110,7 +121,7 @@ WINDOW *awin;
 		}
 		if (c == -1)
 			continue;
-		else if(c == _tty.sg_erase)	{	/* process erase char */
+		else if(c == terminal.c_cc[VERASE])	{	/* process erase char */
 			if (sp > buf) {
 				reg int i;
 	
@@ -120,7 +131,7 @@ WINDOW *awin;
 			}
 			continue;
 		}
-		else if (c == _tty.sg_kill) {   /* process kill character */
+		else if (c == terminal.c_cc[VKILL]) {   /* process kill character */
 			sp = buf;
 			wmove(awin, oy, ox);
 			continue;
@@ -138,7 +149,7 @@ WINDOW *awin;
 		*sp++ = c;
 		waddstr(awin, unctrl(c));
 	}
-	*sp = NULL;
+	*sp = '\0';
 	if (sp > buf)	/* only change option if something was typed */
 		strucpy(opt, buf, strlen(buf));
 	wmove(awin, oy, ox);
@@ -214,5 +225,5 @@ int len;
 		strcpy(s1, (sp = unctrl(*s2++)));
 		s1 += strlen(sp);
 	}
-	*s1 = NULL;
+	*s1 = '\0';
 }

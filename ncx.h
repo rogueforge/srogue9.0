@@ -1,3 +1,10 @@
+/*
+ * Super-Rogue
+ * Copyright (C) 1984 Robert D. Kindelberger
+ * All rights reserved.
+ *
+ * See the file LICENSE.TXT for full copyright and licensing information.
+ */
 
 /*
 # define	CBREAK 	FALSE

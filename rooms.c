@@ -1,8 +1,17 @@
-/* EMACS_MODES: !fill,tabstop=4,c */
 /*
  * Draw the nine rooms on the screen
  *
  * @(#)rooms.c	9.0	(rdk)	 7/17/84
+ *
+ * Super-Rogue
+ * Copyright (C) 1984 Robert D. Kindelberger
+ * All rights reserved.
+ *
+ * Based on "Rogue: Exploring the Dungeons of Doom"
+ * Copyright (C) 1980, 1981 Michael Toy, Ken Arnold and Glenn Wichman
+ * All rights reserved.
+ *
+ * See the file LICENSE.TXT for full copyright and licensing information.
  */
 
 #include "rogue.h"
@@ -223,7 +232,7 @@ rnd_pos(rp)
 struct room *rp;
 {
 	reg int y, x, i;
-	struct coord spot;
+	static struct coord spot;
 
 	i = 0;
 	do {

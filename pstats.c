@@ -1,9 +1,14 @@
-/* EMACS_MODES: !fill,tabstop=4,c */
 /*
  * Players status routines
  *
  * @(#)pstats.c	9.0	(rdk)	 7/17/84
-*/
+ *
+ * Super-Rogue
+ * Copyright (C) 1984 Robert D. Kindelberger
+ * All rights reserved.
+ *
+ * See the file LICENSE.TXT for full copyright and licensing information.
+ */
 
 #include "rogue.h"
 #include "rogue.ext"
@@ -348,7 +353,7 @@ struct stats *who;
 hungdam()
 {
 	switch (hungry_state) {
-		case F_OK:
+		case F_OKAY:
 		case F_HUNGRY:	return 0;
 		when F_WEAK:	return -1;
 		when F_FAINT:	return -2;

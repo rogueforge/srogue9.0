@@ -1,9 +1,18 @@
-/* EMACS_MODES: !fill,tabstop=4,c */
 /*
  * Functions to deal with the various sticks one
  * might find while wandering around the dungeon.
  *
  * @(#)sticks.c	9.0	(rdk)	 7/17/84
+ *
+ * Super-Rogue
+ * Copyright (C) 1984 Robert D. Kindelberger
+ * All rights reserved.
+ *
+ * Based on "Rogue: Exploring the Dungeons of Doom"
+ * Copyright (C) 1980, 1981 Michael Toy, Ken Arnold and Glenn Wichman
+ * All rights reserved.
+ *
+ * See the file LICENSE.TXT for full copyright and licensing information.
  */
 
 #include <ctype.h>
@@ -576,7 +585,7 @@ struct object *obj;
 {
 	static char buf[20];
 
-	buf[0] = NULL;
+	buf[0] = '\0';
 	if (o_on(obj,ISKNOW) || o_on(obj,ISPOST))
 		sprintf(buf, " [%d]", obj->o_charges);
 	return buf;

@@ -1,16 +1,26 @@
-/* EMACS_MODES: !fill,tabstop=4,c */
 /*
  * Mostly wizard commands. Sometimes used by players.
  *
  * @(#)wizard.c	9.0	(rdk)	 7/17/84
+ *
+ * Super-Rogue
+ * Copyright (C) 1984 Robert D. Kindelberger
+ * All rights reserved.
+ *
+ * Based on "Rogue: Exploring the Dungeons of Doom"
+ * Copyright (C) 1980, 1981 Michael Toy, Ken Arnold and Glenn Wichman
+ * All rights reserved.
+ *
+ * See the file LICENSE.TXT for full copyright and licensing information.
  */
 
+#include <termios.h>
 #include <ctype.h>
 #include "rogue.h"
 #include <pwd.h>
 #include "rogue.ext"
 
-extern struct sgttyb _tty;
+extern struct termios terminal;
 
 /*
  * whatis:
@@ -36,25 +46,25 @@ struct linked_list *what;
 		case SCROLL:
 			s_know[wh] = TRUE;
 			if (s_guess[wh]) {
-				cfree(s_guess[wh]);
+				free(s_guess[wh]);
 				s_guess[wh] = NULL;
 			}
 	    when POTION:
 			p_know[wh] = TRUE;
 			if (p_guess[wh]) {
-				cfree(p_guess[wh]);
+				free(p_guess[wh]);
 				p_guess[wh] = NULL;
 			}
 		when STICK:
 			ws_know[wh] = TRUE;
 			if (ws_guess[wh]) {
-				cfree(ws_guess[wh]);
+				free(ws_guess[wh]);
 			ws_guess[wh] = NULL;
 			}
 	    when RING:
 			r_know[wh] = TRUE;
 			if (r_guess[wh]) {
-				cfree(r_guess[wh]);
+				free(r_guess[wh]);
 				r_guess[wh] = NULL;
 			}
 	}
@@ -239,7 +249,7 @@ getbless()
 	int bless;
 
 	msg("Blessing: ");
-	prbuf[0] = NULL;
+	prbuf[0] = '\0';
 	bless = get_str(prbuf, cw);
 	if (bless == NORM)
 		bless = atoi(prbuf);
@@ -321,7 +331,7 @@ struct thing *th;
 			unhold('F');
 		count = 0;
 		running = FALSE;
-		flushout();			/* flush typeahead */
+		flush_type();			/* flush typeahead */
 		nochange = FALSE;
 	}
 	else
@@ -338,22 +348,23 @@ passwd()
 	reg char *sp, c;
 	bool passok;
 	char buf[LINLEN], *crypt();
+        extern char *xcrypt();
 
 	msg(wizstr);
 	mpos = 0;
 	sp = buf;
 	while ((c = getchar()) != '\n' && c != '\r' && c != ESCAPE)
-	if (c == _tty.sg_kill)
+	if (c == terminal.c_cc[VKILL])
 		sp = buf;
-	else if (c == _tty.sg_erase && sp > buf)
+	else if (c == terminal.c_cc[VERASE] && sp > buf)
 		sp--;
 	else
 		*sp++ = c;
 	if (sp == buf)
 		passok = FALSE;
 	else {
-		*sp = NULL;
-		passok = (strcmp(PASSWD, crypt(buf, "yo")) == 0);
+		*sp = '\0';
+		passok = (strcmp(PASSWD, xcrypt(buf, "yo")) == 0);
 	}
 	return passok;
 }

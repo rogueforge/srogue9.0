@@ -1,8 +1,13 @@
-/* EMACS_MODES: !fill,tabstop=4,c */
 /*
  * various display routines and flag checking functions
  *
  * @(#)disply.c		9.0	(rdk)	 7/17/84
+ *
+ * Super-Rogue
+ * Copyright (C) 1984 Robert D. Kindelberger
+ * All rights reserved.
+ *
+ * See the file LICENSE.TXT for full copyright and licensing information.
  */
 
 #include "rogue.h"

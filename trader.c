@@ -1,10 +1,16 @@
-/* EMACS_MODES: !fill,tabstop=4,c */
 /*
  * Anything to do with trading posts & mazes
  *
  * @(#)trader.c	9.0	(rdk)	 7/17/84
+ *
+ * Super-Rogue
+ * Copyright (C) 1984 Robert D. Kindelberger
+ * All rights reserved.
+ *
+ * See the file LICENSE.TXT for full copyright and licensing information.
  */
 
+#include <stdlib.h>
 #include "rogue.h"
 #include "rogue.ext"
 
@@ -137,7 +143,7 @@ buy_it()
 		++trader;				/* another transaction */
 		trans_line();			/* show remaining deals */
 		curprice = NOTPRICED;
-		curpurch[0] = NULL;
+		curpurch[0] = '\0';
 	}
 }
 
@@ -319,11 +325,11 @@ struct cell {
 struct bordercells {
 	char num_pos;			/* number of frontier cells next to you */
 	struct cell conn[4];	/* the y,x position of above cell */
-} border;
+} mborder;
 
 char *frontier, *bits;
 char *moffset(), *foffset();
-int lines, cols;
+int tlines, tcols;
 
 /*
  * draw_maze:
@@ -334,12 +340,12 @@ draw_maze()
 	reg int i, j, more;
 	reg char *ptr;
 
-	lines = (LINES - 3) / 2;
-	cols = (COLS - 1) / 2;
+	tlines = (LINES - 3) / 2;
+	tcols = (COLS - 1) / 2;
 	bits = ALLOC((LINES - 3) * (COLS - 1));
-	frontier = ALLOC(lines * cols);
+	frontier = ALLOC(tlines * tcols);
 	ptr = frontier;
-	while (ptr < (frontier + (lines * cols)))
+	while (ptr < (frontier + (tlines * tcols)))
 		*ptr++ = TRUE;
 	for (i = 0; i < LINES - 3; i++) {
 		for (j = 0; j < COLS - 1; j++) {
@@ -349,8 +355,8 @@ draw_maze()
 				*moffset(i, j) = TRUE;		/* wall */
 		}
 	}
-	for (i = 0; i < lines; i++) {
-		for (j = 0; j < cols; j++) {
+	for (i = 0; i < tlines; i++) {
+		for (j = 0; j < tcols; j++) {
 			do
 				more = findcells(i,j);
 			while(more != 0);
@@ -385,7 +391,7 @@ int y, x;
 {
 	char *ptr;
 
-	ptr = frontier + (y * cols) + x;
+	ptr = frontier + (y * tcols) + x;
 	return ptr;
 }
 
@@ -399,43 +405,43 @@ int x, y;
 	reg int rtpos, i;
 
 	*foffset(y, x) = FALSE;
-	border.num_pos = 0;
-	if (y < lines - 1) {				/* look below */
+	mborder.num_pos = 0;
+	if (y < tlines - 1) {				/* look below */
 		if (*foffset(y + 1, x)) {
-			border.conn[border.num_pos].y_pos = y + 1;
-			border.conn[border.num_pos].x_pos = x;
-			border.num_pos += 1;
+			mborder.conn[mborder.num_pos].y_pos = y + 1;
+			mborder.conn[mborder.num_pos].x_pos = x;
+			mborder.num_pos += 1;
 		}
 	}
 	if (y > 0) {						/* look above */
 		if (*foffset(y - 1, x)) {
-			border.conn[border.num_pos].y_pos = y - 1;
-			border.conn[border.num_pos].x_pos = x;
-			border.num_pos += 1;
+			mborder.conn[mborder.num_pos].y_pos = y - 1;
+			mborder.conn[mborder.num_pos].x_pos = x;
+			mborder.num_pos += 1;
 
 		}
 	}
-	if (x < cols - 1) {					/* look right */
+	if (x < tcols - 1) {					/* look right */
 		if (*foffset(y, x + 1)) {
-			border.conn[border.num_pos].y_pos = y;
-			border.conn[border.num_pos].x_pos = x + 1;
-			border.num_pos += 1;
+			mborder.conn[mborder.num_pos].y_pos = y;
+			mborder.conn[mborder.num_pos].x_pos = x + 1;
+			mborder.num_pos += 1;
 		}
 	}
 	if (x > 0) {						/* look left */
 		if (*foffset(y, x - 1)) {
-			border.conn[border.num_pos].y_pos = y;
-			border.conn[border.num_pos].x_pos = x - 1;
-			border.num_pos += 1;
+			mborder.conn[mborder.num_pos].y_pos = y;
+			mborder.conn[mborder.num_pos].x_pos = x - 1;
+			mborder.num_pos += 1;
 
 		}
 	}
-	if (border.num_pos == 0)			/* no neighbors available */
+	if (mborder.num_pos == 0)			/* no neighbors available */
 		return 0;
 	else {
-		i = rnd(border.num_pos);
-		rtpos = border.num_pos - 1;
-		rmwall(border.conn[i].y_pos, border.conn[i].x_pos, y, x);
+		i = rnd(mborder.num_pos);
+		rtpos = mborder.num_pos - 1;
+		rmwall(mborder.conn[i].y_pos, mborder.conn[i].x_pos, y, x);
 		return rtpos;
 	}
 }

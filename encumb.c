@@ -1,8 +1,13 @@
-/* EMACS_MODES: !fill,tabstop=4,c */
 /*
  * Stuff to do with encumberence
  *
  * @(#)encumb.c		9.0	(rdk)	 7/17/84
+ *
+ * Super-Rogue
+ * Copyright (C) 1984 Robert D. Kindelberger
+ * All rights reserved.
+ *
+ * See the file LICENSE.TXT for full copyright and licensing information.
  */
 
 #include "rogue.h"
@@ -175,7 +180,7 @@ totalenc()
 
 	wtotal = NORMENCB + playenc();
 	switch(hungry_state) {
-		case F_OK:
+		case F_OKAY:
 		case F_HUNGRY:	;						/* no change */
 		when F_WEAK:	wtotal -= wtotal / 10;	/* 10% off weak */
 		when F_FAINT:	wtotal /= 2;			/* 50% off faint */
@@ -207,7 +212,7 @@ int fromfuse;
 			dropchk = drop(NULL);
 			if (dropchk == SOMTHERE)
 				err = FALSE;
-			else if (dropchk == NULL) {
+			else if (dropchk == FALSE) {
 				mpos = 0;
 				msg("You must drop something");
 			}

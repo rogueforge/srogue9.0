@@ -1,8 +1,17 @@
-/* EMACS_MODES: !fill,tabstop=4,c */
 /*
  * File with various monster functions in it
  *
  * @(#)monsters.c	9.0	(rdk)	 7/17/84
+ *
+ * Super-Rogue
+ * Copyright (C) 1984 Robert D. Kindelberger
+ * All rights reserved.
+ *
+ * Based on "Rogue: Exploring the Dungeons of Doom"
+ * Copyright (C) 1980, 1981 Michael Toy, Ken Arnold and Glenn Wichman
+ * All rights reserved.
+ *
+ * See the file LICENSE.TXT for full copyright and licensing information.
  */
 
 #include "rogue.h"
@@ -309,7 +318,7 @@ tryagain:
 		mp = THINGPTR(ip);
 		nip = next(ip);
 		if (mp->t_type == c)
-			remove(&mp->t_pos, ip);
+			remove_monster(&mp->t_pos, ip);
 	}
 	mm->m_lev.l_lev = -1;				/* get rid of it */
 	mm->m_lev.h_lev = -1;

@@ -1,4 +1,3 @@
-/* EMACS_MODES: !fill,tabstop=4,c */
 /*
  * Change the version number of rogue
  *
@@ -7,7 +6,14 @@
  * " * @(#)filename\tVERSION\t ..."
  *
  * Where VERSION is a 3 character string, i.e., "8.2"
+ *
+ * Super-Rogue
+ * Copyright (C) 1984 Robert D. Kindelberger
+ * All rights reserved.
+ *
+ * See the file LICENSE.TXT for full copyright and licensing information.
  */
+
 #include <stdio.h>
 #include <time.h>
 

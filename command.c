@@ -1,8 +1,17 @@
-/* EMACS_MODES: !fill,tabstop=4,c */
 /*
  * Read and execute the user commands
  *
  * @(#)command.c	9.0	(rdk)	 7/17/84
+ *
+ * Super-Rogue
+ * Copyright (C) 1984 Robert D. Kindelberger
+ * All rights reserved.
+ *
+ * Based on "Rogue: Exploring the Dungeons of Doom"
+ * Copyright (C) 1980, 1981 Michael Toy, Ken Arnold and Glenn Wichman
+ * All rights reserved.
+ *
+ * See the file LICENSE.TXT for full copyright and licensing information.
  */
 
 #include <ctype.h>
@@ -135,7 +144,7 @@ command()
 						after = FALSE;
 					else
 						missile(delta.y, delta.x);
-				when 'Q' : after = FALSE; quit();
+				when 'Q' : after = FALSE; quit(-1);
 				when 'i' : after = FALSE; inventory(pack, 0);
 				when 'I' : after = FALSE; picky_inven();
 				when 'd' : drop(NULL);
@@ -162,8 +171,8 @@ command()
 						after = FALSE;
 				when 'v': msg("Super Rogue version %s.",release);
 				when 'D': dip_it();
-				when CTRL(L) : after = FALSE; restscr(cw);
-				when CTRL(R) : after = FALSE; msg(huh);
+				when CTRL('L') : after = FALSE; restscr(cw);
+				when CTRL('R') : after = FALSE; msg(huh);
 				when 'a': after = FALSE; dispmax();
 				when '@' : if (author())
 					msg("Hero @ %d,%d : Stairs @ %d,%d",hero.y,hero.x,stairs.y,stairs.x);
@@ -182,7 +191,7 @@ command()
 						activity();
 						after = FALSE;
 					}
-				when CTRL(P) :
+				when CTRL('P') :
 					after = FALSE;
 					if (wizard) {
 						wizard = FALSE;
@@ -216,20 +225,20 @@ command()
 				otherwise :
 					after = FALSE;
 					if (wizard) switch (ch) {
-					case CTRL(A) : ;
+					case CTRL('A') : ;
 					when 'C'     :	create_obj(FALSE);
-					when CTRL(I) :	inventory(lvl_obj, 1);
-					when CTRL(W) :	whatis(NULL);
-					when CTRL(D) :	level++; new_level(NORMLEV);
-					when CTRL(U) :	level--; new_level(NORMLEV);
-					when CTRL(F) :	displevl();
-					when CTRL(X) :	dispmons();
-					when CTRL(T) :	teleport(rndspot,&player);
-					when CTRL(E) :	msg("food left: %d", food_left);
-					when CTRL(O) :	add_pass();
+					when CTRL('I') :	inventory(lvl_obj, 1);
+					when CTRL('W') :	whatis(NULL);
+					when CTRL('D') :	level++; new_level(NORMLEV);
+					when CTRL('U') :	level--; new_level(NORMLEV);
+					when CTRL('F') :	displevl();
+					when CTRL('X') :	dispmons();
+					when CTRL('T') :	teleport(rndspot,&player);
+					when CTRL('E') :	msg("food left: %d", food_left);
+					when CTRL('O') :	add_pass();
 					when 'M' : {
 						int tlev, whichlev;
-						prbuf[0] = NULL;
+						prbuf[0] = '\0';
 						msg("Which level? ");
 						if (get_str(prbuf,cw) == NORM) {
 							whichlev = NORMLEV;
@@ -248,7 +257,7 @@ command()
 							new_level(whichlev);
 						}
 					}
-					when CTRL(N) : {
+					when CTRL('N') : {
 						struct linked_list *item;
 
 						item = get_item("charge", STICK);
@@ -257,7 +266,7 @@ command()
 							msg("");
 						}
 					}
-					when CTRL(H) : {
+					when CTRL('H') : {
 						int i;
 						struct linked_list *item;
 						struct object *obj;
@@ -343,7 +352,8 @@ command()
  * quit:
  *	Have player make certain, then exit.
  */
-quit()
+void
+quit(int a)
 {
 	reg char ch, good;
 	/*
@@ -647,7 +657,8 @@ call()
 {
 	reg struct object *obj;
 	reg struct linked_list *item;
-	reg char **guess, *elsewise;
+	reg char **guess;
+	const char *elsewise;
 	int wh;
 
 	if ((item = get_item("call", 0)) == NULL)
@@ -675,7 +686,7 @@ call()
 	msg("Was called \"%s\"", elsewise);
 	msg(callit);
 	if (guess[wh] != NULL)
-		cfree(guess[wh]);
+		free(guess[wh]);
 	strcpy(prbuf, elsewise);
 	if (get_str(prbuf, cw) == NORM) {
 		guess[wh] = new(strlen(prbuf) + 1);

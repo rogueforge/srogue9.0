@@ -1,11 +1,22 @@
-/* EMACS_MODES: !fill,tabstop=4,c */
 /*
  * Rogue
  * Exploring the dungeons of doom
  *
  * @(#)main.c	9.0	(rdk)	 7/17/84
+ *
+ * Super-Rogue
+ * Copyright (C) 1984 Robert D. Kindelberger
+ * All rights reserved.
+ *
+ * Based on "Rogue: Exploring the Dungeons of Doom"
+ * Copyright (C) 1980, 1981 Michael Toy, Ken Arnold and Glenn Wichman
+ * All rights reserved.
+ *
+ * See the file LICENSE.TXT for full copyright and licensing information.
  */
 
+#include <time.h>
+#include <termios.h>
 #include <stdio.h>
 #include <signal.h>
 #include <pwd.h>
@@ -25,6 +36,8 @@
 
 #define SCOREFILE "/usr/games/rogue_score"
 
+struct termios terminal;
+
 main(argc, argv, envp)
 char **argv;
 char **envp;
@@ -35,9 +48,9 @@ char **envp;
 	struct passwd *pw;
 	struct passwd *getpwuid();
 	char alldone, wpt;
-	char *getpass(), *crypt(), *strrchr();
-	int lowtime, byebye();
-	long now;
+	char *getpass(), *xcrypt(), *strrchr();
+	int lowtime;
+	time_t now;
 
 	playuid = getuid();
 
@@ -68,7 +81,7 @@ char **envp;
 
 	if (argc >= 2 && strcmp(argv[1],"-w") == 0)
 	{
-		if (strcmp(PASSWD, crypt(getpass(wizstr),"yo")) == 0)
+		if (strcmp(PASSWD, xcrypt(getpass(wizstr),"yo")) == 0)
 		{
 			wizard = TRUE;
 			argv++;
@@ -85,7 +98,7 @@ char **envp;
 	else if ((pw = getpwuid(playuid)) != NULL)
 		strcpy(home, pw->pw_dir);
 	else
-		home[0] = NULL;
+		home[0] = '\0';
 
 	strcat(home, "/");
 	strcpy(file_name, home);
@@ -94,7 +107,7 @@ char **envp;
 	if ((env = getenv("ROGUEOPTS")) != NULL)
 		parse_opts(env);
 
-	if (env == NULL || whoami[0] == NULL)
+	if (env == NULL || whoami[0] == '\0')
 	{
 		if((pw = getpwuid(playuid)) == NULL)
 		{
@@ -105,7 +118,7 @@ char **envp;
 			strucpy(whoami, pw->pw_name, strlen(pw->pw_name));
 	}
 
-	if (env == NULL || fruit[0] == NULL)
+	if (env == NULL || fruit[0] == '\0')
 		strcpy(fruit, "juicy-fruit");
 
 	if (argc == 2)
@@ -116,9 +129,9 @@ char **envp;
 		atoi(getenv("SEED")) : lowtime + getpid());
 
 	if(wizard)
-		printf("Hello %s, welcome to dungeon #%d", whoami, dnum);
+		printf("Hello %s, welcome to dungeon #%d\n", whoami, dnum);
 	else
-		printf("Hello %s, One moment while I open the door to the dungeon...",
+		printf("Hello %s, One moment while I open the door to the dungeon...\n",
 		   whoami);
 
 	fflush(stdout);
@@ -131,7 +144,7 @@ char **envp;
 	init_everything();
 	initscr();			/* Start up cursor package */
 
-	if (strcmp(ttytype,"dumb") == 0)
+	if (strcmp(termname(),"dumb") == 0)
 	{
 		printf("ERROR in terminal parameters.\n");
 		printf("Check TERM in environment.\n");
@@ -230,7 +243,8 @@ char **envp;
  * endit:
  *	Exit the program abnormally.
  */
-endit()
+void
+endit(int a)
 {
 	fatal("Ok, if you want to exit that badly, I'll have to allow it");
 }
@@ -257,13 +271,13 @@ char *s;
  *	to the way they were when he started
  */
 
+void
 byebye(how)
 int how;
 {
 	EXTBOOL _endwin;
 
-	if (!_endwin)
-		endwin();
+	endwin();
 
 	exit(how);		/* exit like flag says */
 }
@@ -312,12 +326,20 @@ setup()
 	signal(SIGQUIT,  byebye);
 	signal(SIGILL, game_err);
 	signal(SIGTRAP, game_err);
+#ifdef SIGIOT
 	signal(SIGIOT, game_err);
+#endif
+#ifdef SIGEMT
 	signal(SIGEMT, game_err);
+#endif
 	signal(SIGFPE, game_err);
+#ifdef SIGBUS
 	signal(SIGBUS, game_err);
+#endif
 	signal(SIGSEGV, game_err);
+#ifdef SIGSYS
 	signal(SIGSYS, game_err);
+#endif
 	signal(SIGPIPE, game_err);
 	signal(SIGTERM, game_err);
 
@@ -345,7 +367,7 @@ playit()
 	nochange = FALSE;
 	while (playing)
 		command();		/* Command execution */
-	endit();
+	endit(0);
 }
 
 

@@ -1,15 +1,24 @@
-/* EMACS_MODES: !fill,tabstop=4,c */
 /*
  * initializate various things
  *
  * @(#)init.c	9.0	(rdk)	 7/17/84
+ *
+ * Super-Rogue
+ * Copyright (C) 1984 Robert D. Kindelberger
+ * All rights reserved.
+ *
+ * Based on "Rogue: Exploring the Dungeons of Doom"
+ * Copyright (C) 1980, 1981 Michael Toy, Ken Arnold and Glenn Wichman
+ * All rights reserved.
+ *
+ * See the file LICENSE.TXT for full copyright and licensing information.
  */
 
 #include <ctype.h>
 #include "rogue.h"
 #include "rogue.ext"
 
-static char *rainbow[] = {
+static const char *rainbow[] = {
 	"Red",		"Blue",		"Green",	"Yellow",
 	"Black",	"Brown",	"Orange",	"Pink",
 	"Purple",	"Grey",		"White",	"Silver",
@@ -42,7 +51,7 @@ static char *sylls[] = {
 };
 #define NSYLS (sizeof sylls / (sizeof (char *)))
 
-char *stones[] = {
+const char *stones[] = {
 	"Agate",		"Alexandrite",	"Amethyst",
 	"Azurite",		"Carnelian",	"Chrysoberyl",
 	"Chrysoprase",	"Citrine",		"Diamond",
@@ -58,7 +67,7 @@ char *stones[] = {
 };
 #define NSTONES (sizeof stones / (sizeof (char *)))
 
-static char *wood[] = {
+static const char *wood[] = {
 	"Avocado wood",	"Balsa",	"Banyan",		"Birch",
 	"Cedar",		"Cherry",	"Cinnibar",		"Dogwood",
 	"Driftwood",	"Ebony",	"Eucalyptus",	"Hemlock",
@@ -68,7 +77,7 @@ static char *wood[] = {
 };
 #define NWOOD (sizeof wood / (sizeof (char *)))
 
-static char *metal[] = {
+static const char *metal[] = {
 	"Aluminium",	"Bone",		"Brass",	"Bronze",
 	"Copper",		"Chromium",	"Iron",		"Lead",
 	"Magnesium",	"Pewter",	"Platinum",	"Steel",
@@ -125,15 +134,18 @@ init_things()
  */
 init_colors()
 {
-	reg int i;
+	reg int i, j;
 	reg char *str;
+	bool used[NCOLORS];
 
+	for (i = 0; i < NCOLORS; i++)
+		used[i] = FALSE;
 	for (i = 0; i < MAXPOTIONS; i++) {
 		do {
-			str = rainbow[rnd(NCOLORS)];
-		} until (isupper(*str));
-		*str = tolower(*str);
-		p_colors[i] = str;
+			j = rnd(NCOLORS);
+		} until (!used[j]);
+		used[j] = TRUE;
+		p_colors[i] = rainbow[j];
 		p_know[i] = FALSE;
 		p_guess[i] = NULL;
 		if (i > 0)
@@ -165,7 +177,7 @@ init_names()
 			}
 			*cp++ = ' ';
 		}
-		*--cp = NULL;
+		*--cp = '\0';
 		s_names[i] = new(strlen(prbuf)+1);
 		s_know[i] = FALSE;
 		s_guess[i] = NULL;
@@ -183,15 +195,19 @@ init_names()
 
 init_stones()
 {
-	reg int i;
+	reg int i, j;
 	reg char *str;
+	bool used[NSTONES];
+
+	for (i = 0; i < NSTONES; i++)
+		used[i] = FALSE;
 
 	for (i = 0; i < MAXRINGS; i++) {
 		do {
-			str = stones[rnd(NSTONES)];
-		} until (isupper(*str));
-		*str = tolower(*str);
-		r_stones[i] = str;
+			j = rnd(NSTONES);
+		} until (!used[j]);
+		used[j] = TRUE;
+		r_stones[i] = stones[j];
 		r_know[i] = FALSE;
 		r_guess[i] = NULL;
 		if (i > 0)
@@ -207,31 +223,42 @@ init_stones()
 
 init_materials()
 {
-	int i;
-	char *str;
+	int i, j;
+	const char *str;
 	struct rod *rd;
+	bool metused[NMETAL], woodused[NWOOD];
+
+	for (i = 0; i < NWOOD; i++)
+		woodused[i] = FALSE;
+	for (i = 0; i < NMETAL; i++)
+		metused[i] = FALSE;
 
 	for (i = 0; i < MAXSTICKS; i++) {
 		rd = &ws_stuff[i];
-		do {
+		for (;;)  {
 			if (rnd(100) > 50) {
-				str = metal[rnd(NMETAL)];
-				if (isupper(*str)) {
+				j = rnd(NMETAL);
+				if (!metused[j]) {
+					str = metal[j];
 					rd->ws_type = "wand";
 					rd->ws_vol = V_WS_WAND;
 					rd->ws_wght = W_WS_WAND;
+					metused[j] = TRUE;
+					break;
 				}
 			}
 			else {
-				str = wood[rnd(NWOOD)];
-				if (isupper(*str)) {
+				j = rnd(NWOOD);
+				if (!woodused[j]) {
+					str = wood[j];
 					rd->ws_type = "staff";
 					rd->ws_vol = V_WS_STAFF;
 					rd->ws_wght = W_WS_WAND;
+					woodused[j] = TRUE;
+					break;
 				}
 			}
-		} until (isupper(*str));
-		*str = tolower(*str);
+		} 
 		ws_stuff[i].ws_made = str;
 		ws_know[i] = FALSE;
 		ws_guess[i] = NULL;

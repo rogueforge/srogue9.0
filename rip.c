@@ -1,8 +1,17 @@
-/* EMACS_MODES: !fill,tabstop=4,c */
 /*
  * File for the fun, ends in death or a total win
  *
  * @(#)rip.c	9.0	(rdk)	 7/17/84
+ *
+ * Super-Rogue
+ * Copyright (C) 1984 Robert D. Kindelberger
+ * All rights reserved.
+ *
+ * Based on "Rogue: Exploring the Dungeons of Doom"
+ * Copyright (C) 1980, 1981 Michael Toy, Ken Arnold and Glenn Wichman
+ * All rights reserved.
+ *
+ * See the file LICENSE.TXT for full copyright and licensing information.
  */
 
 #include <signal.h>
@@ -33,7 +42,7 @@ static char *rip[] = {
 "                    |                              |",
 "                    |                              |",
 "                   *|     *     *     *     *      |*",
-"            _______)\\//\\//\)//\\//)/\\//\\)/\\//\\)/\\//\\//(________",
+"            _______)\\\\//\\\\//\\)//\\\\//)/\\\\//\\\\)/\\\\//\\\\)/\\\\//\\\\//(________",
 };
 
 #define RIP_LINES (sizeof rip / (sizeof (char *)))
@@ -89,7 +98,7 @@ struct sc_ent {
 	unsigned char sc_monster;	/* killer */
 	int sc_explvl;			/* experience level */
 	long int sc_exppts;		/* experience points */
-	long sc_date;			/* time this score was posted */
+	time_t sc_date;			/* time this score was posted */
 } top_ten[10];
 
 char *reason[] = {
@@ -121,7 +130,7 @@ int amount, aflag;
 			packend = "at your untimely demise";
 		mvaddstr(LINES - 1, 0, retstr);
 		refresh();
-		gets(prbuf);
+		wgetnstr(stdscr, prbuf,80);
 		oldpurse = purse;
 		showpack(FALSE, packend);
 	}
@@ -130,7 +139,7 @@ int amount, aflag;
 	 */
 	if ((fd = open(scorefile, O_RDWR)) < 0)
 		return;
-	outf = fdopen(fd, "w");
+	outf = (FILE *) fdopen(fd, "w");
 	for (scp = top_ten; scp < &top_ten[10]; scp++) {
 		scp->sc_score = 0;
 		for (i = 0; i < 80; i++)
@@ -143,7 +152,7 @@ int amount, aflag;
 	}
 	mvaddstr(LINES - 1, 0, retstr);
 	refresh();
-	gets(prbuf);
+	wgetnstr(stdscr,prbuf,80);
 	if (author() || wizard)
 		if (strcmp(prbuf, "names") == 0)
 			prflags = 1;
@@ -301,7 +310,9 @@ char *howso;
 		}
 	}
 	mvprintw(cnt + 1,0,"--- %d  Gold Pieces ---",oldpurse);
+	mvaddstr(LINES - 1, 0, retstr);
 	refresh();
+	wgetnstr(stdscr, prbuf,80);
 }
 
 /*

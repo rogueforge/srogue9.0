@@ -1,8 +1,17 @@
-/* EMACS_MODES: !fill, tabstop=4,c */
 /*
  * Read a scroll and let it happen
  *
  * @(#)scrolls.c	9.0	(rdk)	 7/17/84
+ *
+ * Super-Rogue
+ * Copyright (C) 1984 Robert D. Kindelberger
+ * All rights reserved.
+ *
+ * Based on "Rogue: Exploring the Dungeons of Doom"
+ * Copyright (C) 1980, 1981 Michael Toy, Ken Arnold and Glenn Wichman
+ * All rights reserved.
+ *
+ * See the file LICENSE.TXT for full copyright and licensing information.
  */
 
 #include <ctype.h>
@@ -151,7 +160,8 @@ read_scroll()
 				for (j = 0; j < COLS; j++) {
 					switch (nch = ch = mvwinch(hw, i, j)) {
 						case SECRETDOOR:
-							mvaddch(i, j, nch = DOOR);
+							nch = DOOR;
+							mvaddch(i, j, nch);
 						case '-':
 						case '|':
 						case DOOR:
@@ -439,7 +449,7 @@ read_scroll()
 	look(TRUE);
 	nochange = FALSE;
 	if (s_know[wh] && s_guess[wh]) {
-		cfree(s_guess[wh]);
+		free(s_guess[wh]);
 		s_guess[wh] = NULL;
 	}
 	else if (!s_know[wh] && s_guess[wh] == NULL) {

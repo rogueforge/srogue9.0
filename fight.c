@@ -1,8 +1,17 @@
-/* EMACS_MODES: !fill,tabstop=4,c */
 /*
  * All the fighting gets done here
  *
  * @(#)fight.c	9.0	(rdk)	 7/17/84
+ *
+ * Super-Rogue
+ * Copyright (C) 1984 Robert D. Kindelberger
+ * All rights reserved.
+ *
+ * Based on "Rogue: Exploring the Dungeons of Doom"
+ * Copyright (C) 1980, 1981 Michael Toy, Ken Arnold and Glenn Wichman
+ * All rights reserved.
+ *
+ * See the file LICENSE.TXT for full copyright and licensing information.
  */
 
 #include <ctype.h>
@@ -205,7 +214,7 @@ struct thing *mp;
 						msg("Your purse feels lighter.");
 					lep = find_mons(mp->t_pos.y,mp->t_pos.x);
 					if (lep != NULL)
-						remove(&mp->t_pos, lep);
+						remove_monster(&mp->t_pos, lep);
 				}
 				when 'N': {
 					struct linked_list *steal, *list;
@@ -232,7 +241,7 @@ struct thing *mp;
 
 							nym = find_mons(mp->t_pos.y, mp->t_pos.x);
 							if (nym != NULL)
-								remove(&mp->t_pos, nym);
+								remove_monster(&mp->t_pos, nym);
 							msg("She stole %s!", inv_name(sobj, TRUE));
 							detach(pack, steal);
 							discard(steal);
@@ -320,7 +329,7 @@ struct thing *mp;
 		}
 		miss(mname);
 	}
-	flushout();					/* flush type ahead */
+	flush_type();					/* flush type ahead */
 	count = 0;
 }
 
@@ -484,7 +493,7 @@ bool upper;
 {
 static char tbuf[LINLEN];
 
-	*tbuf = NULL;
+	*tbuf = '\0';
 	if (who == 0)
 		strcpy(tbuf, "you"); 
 	else if (pl_on(ISBLIND))
@@ -592,7 +601,7 @@ char *mname;
  * remove:
  *	Remove a monster from the screen
  */
-remove(mp, item)
+remove_monster(mp, item)
 struct coord *mp;
 struct linked_list *item;
 {
@@ -679,7 +688,7 @@ bool pr;
 	}
 	pitem = tp->t_pack;
 	itspack = tp->t_pack;
-	remove(&here, item);
+	remove_monster(&here, item);
 	while (pitem != NULL) {
 		nexti = next(pitem);
 		obj = OBJPTR(pitem);

@@ -1,14 +1,25 @@
-/* EMACS_MODES: !fill,tabstop=4,c */
 /*
  * save and restore routines
  *
  * @(#)save.c	9.0	(rdk)	 7/17/84
+ *
+ * Super-Rogue
+ * Copyright (C) 1984 Robert D. Kindelberger
+ * All rights reserved.
+ *
+ * Based on "Rogue: Exploring the Dungeons of Doom"
+ * Copyright (C) 1980, 1981 Michael Toy, Ken Arnold and Glenn Wichman
+ * All rights reserved.
+ *
+ * See the file LICENSE.TXT for full copyright and licensing information.
  */
 
+#include <unistd.h>
 #include <ctype.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <signal.h>
+#include <errno.h>
 #include "rogue.h"
 #include "rogue.ext"
 
@@ -16,9 +27,8 @@
 #define srand48(seed)	srandom(seed)
 #endif
 
-EXTCHAR *sys_errlist[], version[];
+EXTCHAR version[];
 EXTCHAR *ctime();
-EXTINT errno;
 
 typedef struct stat STAT;
 STAT sbuf;
@@ -46,7 +56,7 @@ save_game()
 	char buf[LINLEN];
 
 	mpos = 0;
-	if (file_name[0] != NULL) {
+	if (file_name[0] != '\0') {
 		msg("Save file (%s)? ", file_name);
 		do {
 			c = getchar();
@@ -61,7 +71,7 @@ save_game()
 	}
 	msg("File name: ");
 	mpos = 0;
-	buf[0] = NULL;
+	buf[0] = '\0';
 	if (get_str(buf, cw) == QUIT) {
 		msg("");
 		return FALSE;
@@ -78,7 +88,8 @@ gotfile:
  * auto_save:
  *	Automatically save a game
  */
-auto_save()
+void
+auto_save(int a)
 {
 	dosave();		/* save this game */
 	byebye(1);		/* so long for now */
@@ -88,7 +99,8 @@ auto_save()
  * game_err:
  *	When an error occurs. Set error flag and save game.
  */
-game_err()
+void
+game_err(int a)
 {
 	int ok;
 
@@ -108,7 +120,10 @@ game_err()
 	printf("\tuucp ihnp4!akgua!bcs3b2!rdk!YOUR_ID.core YOUR_ID.core\n");
 	fflush(stdout);
 
+#ifdef SIGIOT
 	signal(SIGIOT, SIG_DFL);	/* allow core dump signal */
+#endif
+
 	abort();			/* cause core dump */
 	byebye(3);
 }
@@ -126,7 +141,7 @@ dosave()
 	setgid(playgid);
 	umask(022);
 
-	if (file_name[0] != NULL) {
+	if (file_name[0] != '\0') {
 		if ((savef = fopen(file_name,"w")) != NULL)
 		{
 			save_file(savef);
@@ -153,7 +168,7 @@ FILE *savef;
 	fstat(fnum, &sbuf);
 	write(fnum, "RDK", 4);
 	lseek(fnum, 0L, 0);
-	write(fnum, version, (unsigned int) (sbrk(0) - version));
+	write(fnum, version, (unsigned int) ((char *)sbrk(0) - version));
 	close(fnum);
 	signal(SIGINT, byebye);
 	signal(SIGQUIT, byebye);
@@ -189,7 +204,7 @@ char *file, **envp;
 
 	fstat(inf, &sbuf2);
 	fflush(stdout);
-	brk(version + sbuf2.st_size);
+	sbrk( sbuf2.st_size - ((char *)sbrk(0) - version) );
 	lseek(inf, 0L, 0);
 	read(inf, version, (unsigned int) sbuf2.st_size);
 

@@ -1,16 +1,28 @@
-/* EMACS_MODES: !fill,tabstop=4,!c */
 /*
  * Rogue definitions and variable declarations
  *
  * @(#)rogue.h	9.0	(rdk)	 7/17/84
+ *
+ * Super-Rogue
+ * Copyright (C) 1984 Robert D. Kindelberger
+ * All rights reserved.
+ *
+ * Based on "Rogue: Exploring the Dungeons of Doom"
+ * Copyright (C) 1980, 1981 Michael Toy, Ken Arnold and Glenn Wichman
+ * All rights reserved.
+ *
+ * See the file LICENSE.TXT for full copyright and licensing information.
  */
 
 #ifdef BSD
 #include "cx.h"
 #endif
 
+
 #include <ctype.h>
 #include <curses.h>
+
+#define reg     register        /* register abbr.       */
 
 #ifdef ATT
 #define	CBREAK	FALSE
@@ -140,14 +152,15 @@
 #define attach(a,b) _attach(&a,b)
 #define detach(a,b) _detach(&a,b)
 #define free_list(a) _free_list(&a)
+#ifndef max
 #define max(a, b) ((a) > (b) ? (a) : (b))
-
+#endif
 #define goingup() (level < max_level)
 
 #define on(thing, flag) (((thing).t_flags & flag) != 0)
 #define off(thing, flag) (((thing).t_flags & flag) == 0)
-
-#define CTRL(ch) ('ch' & 0x1F)
+#undef CTRL
+#define CTRL(ch) (ch & 0x1F)
 
 #define ALLOC(x) malloc((unsigned int) x)
 #define FREE(x) free((char *) x)
@@ -196,7 +209,7 @@
 #define NORMENCB 1500	/* normal encumberence */
 #define SOMTHERE 5		/* something is in the way for dropping */
 #define CANTDROP 6		/* cant drop it cause its cursed */
-#define F_OK	 0		/* have plenty of food in stomach */
+#define F_OKAY	 0		/* have plenty of food in stomach */
 #define F_HUNGRY 1		/* player is hungry */
 #define F_WEAK	 2		/* weak from lack of food */
 #define F_FAINT	 3		/* fainting from lack of food */
@@ -504,7 +517,7 @@ struct magic_info {
  */
 struct rod {
 	char *ws_type;		/* either "staff" or "wand" */
-	char *ws_made;		/* "mahogany", etc */
+	const char *ws_made;		/* "mahogany", etc */
 	int	 ws_vol;		/* volume of this type stick */
 	int  ws_wght;		/* weight of this type stick */
 };
