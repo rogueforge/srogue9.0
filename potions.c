@@ -1,8 +1,17 @@
-/* EMACS_MODES: !fill,tabstop=4,c */
 /*
  * Functions for dealing with potions
  *
  * @(#)potions.c	9.0	(rdk)	 7/17/84
+ *
+ * Super-Rogue
+ * Copyright (C) 1984 Robert D. Kindelberger
+ * All rights reserved.
+ *
+ * Based on "Rogue: Exploring the Dungeons of Doom"
+ * Copyright (C) 1980, 1981 Michael Toy, Ken Arnold and Glenn Wichman
+ * All rights reserved.
+ *
+ * See the file LICENSE.TXT for full copyright and licensing information.
  */
 
 #include "rogue.h"
@@ -94,7 +103,7 @@ quaff()
 			mpos = 0;
 			msg("You begin to sense the presence of monsters--More--");
 			p_know[P_MFIND] = TRUE;
-			wait_for(' ');
+			wait_for(cw,' ');
 			msg("");		/* clear line */
 		}
 		else
@@ -300,7 +309,7 @@ quaff()
 	}
 	nochange = FALSE;
 	if (p_know[wh] && p_guess[wh]) {
-		cfree(p_guess[wh]);
+		free(p_guess[wh]);
 		p_guess[wh] = NULL;
 	}
 	else if(!p_know[wh] && p_guess[wh] == NULL) {
