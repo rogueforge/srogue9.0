@@ -71,7 +71,7 @@ char **envp;
 
 	if (*scorefile)
 		strcat(scorefile,"/");
-	strcat(scorefile, "srogue90.scr");
+	strcat(scorefile, "srogue.scr");
 
 	if(argc >= 2 && strcmp(argv[1], "-s") == 0)
 	{
@@ -111,7 +111,7 @@ char **envp;
 
 	strcat(home, "/");
 	strcpy(file_name, home);
-	strcat(file_name, "rogue.sav");
+	strcat(file_name, "srogue.sav");
 
 	if ((env = getenv("ROGUEOPTS")) != NULL)
 		parse_opts(env);
@@ -150,6 +150,11 @@ char **envp;
 	signal(SIGQUIT ,byebye);
 
 	init_everything();
+
+#ifdef __INTERIX
+        setenv("TERM","interix");
+#endif
+
 	initscr();			/* Start up cursor package */
 
 	if (strcmp(termname(),"dumb") == 0)
@@ -164,6 +169,17 @@ char **envp;
 		byebye(1);
 	}
 
+	if ((whoami == NULL) || (*whoami == '\0') || (strcmp(whoami,"dosuser")==0))
+	{
+		echo();
+		mvaddstr(23,2,"Rogue's Name? ");
+		wgetnstr(stdscr,whoami,MAXSTR);
+		noecho();
+	}
+
+	if ((whoami == NULL) || (*whoami == '\0'))
+		strcpy(whoami,"Rodney");
+	
 	setup();
 
 	/* Set up windows */
