@@ -59,7 +59,7 @@ save_game()
 	if (file_name[0] != '\0') {
 		msg("Save file (%s)? ", file_name);
 		do {
-			c = getchar();
+			c = wgetch(cw);
 			if(c == ESCAPE) {
 				msg("");
 				return FALSE;
@@ -159,6 +159,8 @@ save_file(savef)
 FILE *savef;
 {
 	reg int fnum;
+	int slines = LINES;
+	int scols = COLS;
 
 	/*
 	 * force allocation of the buffer now so that inodes, etc
@@ -168,7 +170,16 @@ FILE *savef;
 	fstat(fnum, &sbuf);
 	write(fnum, "RDK", 4);
 	lseek(fnum, 0L, 0);
-	write(fnum, version, (unsigned int) ((char *)sbrk(0) - version));
+	
+	encwrite(version,strlen(version)+1,savef);
+	encwrite(&sbuf.st_ino,sizeof(sbuf.st_ino),savef);
+	encwrite(&sbuf.st_dev,sizeof(sbuf.st_dev),savef);
+	encwrite(&sbuf.st_ctime,sizeof(sbuf.st_ctime),savef);
+	encwrite(&sbuf.st_mtime,sizeof(sbuf.st_mtime),savef);
+	encwrite(&slines,sizeof(slines),savef);
+	encwrite(&scols,sizeof(scols),savef);
+	msg("");
+	rs_save_file(savef);
 	close(fnum);
 	signal(SIGINT, byebye);
 	signal(SIGQUIT, byebye);
@@ -185,9 +196,12 @@ char *file, **envp;
 {
 	register inf, pid;
 	int ret_status;
+#ifndef _AIX
 	extern char **environ;
+#endif
 	char buf[LINLEN];
 	STAT sbuf2;
+	int slines, scols;
 
 	if ((inf = open(file, 0)) < 0) {
 		printf("Cannot read save game %s\n",file);
@@ -195,7 +209,7 @@ char *file, **envp;
 	}
 
 	fflush(stdout);
-	read(inf, buf, strlen(version) + 1);
+	encread(buf, strlen(version) + 1, inf);
 
 	if (strcmp(buf, version) != 0) {
 		printf("Sorry, saved game version is out of date.\n");
@@ -204,9 +218,13 @@ char *file, **envp;
 
 	fstat(inf, &sbuf2);
 	fflush(stdout);
-	sbrk( sbuf2.st_size - ((char *)sbrk(0) - version) );
-	lseek(inf, 0L, 0);
-	read(inf, version, (unsigned int) sbuf2.st_size);
+
+    encread(&sbuf.st_ino,sizeof(sbuf.st_ino), inf);
+    encread(&sbuf.st_dev,sizeof(sbuf.st_dev), inf);
+    encread(&sbuf.st_ctime,sizeof(sbuf.st_ctime), inf);
+    encread(&sbuf.st_mtime,sizeof(sbuf.st_mtime), inf);
+    encread(&slines,sizeof(slines),inf);
+    encread(&scols,sizeof(scols),inf);
 
 	/*
 	 * we do not close the file so that we will have a hold of the
@@ -220,6 +238,29 @@ char *file, **envp;
 		}
 	}
 
+	initscr();
+
+	if (slines > LINES)
+	{
+		endwin();
+		printf("Sorry, original game was played on a screen with %d lines.\n",slines);
+		printf("Current screen only has %d lines. Unable to restore game\n",LINES);
+		return(FALSE);
+	}
+
+	if (scols > COLS)
+	{
+		endwin();
+		printf("Sorry, original game was played on a screen with %d columns.\n", scols);
+		printf("Current screen only has %d columns. Unable to restore game\n",COLS);
+		return(FALSE);
+	}
+
+	cw = newwin(LINES, COLS, 0, 0);
+	mw = newwin(LINES, COLS, 0, 0);
+	hw = newwin(LINES, COLS, 0, 0);
+	nocrmode();
+	
 	mpos = 0;
 	mvwprintw(cw, 0, 0, "%s: %s", file, ctime(&sbuf2.st_mtime));
 
@@ -229,11 +270,21 @@ char *file, **envp;
 	{
 		if (sbuf2.st_nlink != 1)
 		{
+                        endwin();
 			printf("Cannot restore from a linked file\n");
 			return FALSE;
 		}
-		else
-		{
+	}
+
+	if (rs_restore_file(inf) == FALSE)
+	{
+		endwin();
+		printf("Cannot restore file\n");
+		return(FALSE);
+	}
+	
+	if (!wizard)
+	{
 			while((pid = fork()) < 0)
 				sleep(1);
 
@@ -256,30 +307,9 @@ char *file, **envp;
 					return FALSE;
 				}
 			}
-		}
 	}
+
 	environ = envp;
-/*
-	if (!My_term && isatty(2)) {
-		struct screen *sp;
-		struct screen *set_term();
-		char *sp;
-
-		gettmode();
-
-		if ((sp = getenv("TERM")) == NULL)
-			sp = Def_term;
-
-		setterm(sp);
-		setterm("q1");
-		_tty_ch = 2;
-
-		sp = newterm(getenv("TERM"), stdout);
-		set_term(sp);
-	}
-	else
-		setterm(Def_term);
-*/
 
 	strcpy(file_name, file);
 	setup();
