@@ -17,6 +17,8 @@
 #include "rogue.h"
 #include "rogue.ext"
 
+int between = 0;
+
 /*
  * doctor:
  *	A healing daemon that restores hit points after rest
@@ -75,7 +77,6 @@ int fromfuse;
 rollwand(fromfuse)
 int fromfuse;
 {
-	static int between = 0;
 
 	if (++between >= 4) {
 		if (roll(1, 6) == 4) {
