@@ -16,6 +16,7 @@
 
 #include <unistd.h>
 #include <ctype.h>
+#include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <signal.h>
@@ -76,6 +77,7 @@ save_game()
 		msg("");
 		return FALSE;
 	}
+	msg("");
 	strcpy(file_name, buf);
 gotfile:
 	c = dosave();		/* try to save this game */
@@ -115,9 +117,6 @@ game_err(int a)
 	else
 		printf("NOT saveable.");
 
-	printf("\n\nTo assist in solving this error, do this:\n\n");
-	printf("\tmv core YOUR_ID.core\n");
-	printf("\tuucp ihnp4!akgua!bcs3b2!rdk!YOUR_ID.core YOUR_ID.core\n");
 	fflush(stdout);
 
 #ifdef SIGIOT
@@ -203,12 +202,11 @@ char *file, **envp;
 	STAT sbuf2;
 	int slines, scols;
 
-	if ((inf = open(file, 0)) < 0) {
+	if ((inf = open(file, O_RDONLY)) < 0) {
 		printf("Cannot read save game %s\n",file);
 		return FALSE;
 	}
 
-	fflush(stdout);
 	encread(buf, strlen(version) + 1, inf);
 
 	if (strcmp(buf, version) != 0) {
@@ -217,19 +215,19 @@ char *file, **envp;
 	}
 
 	fstat(inf, &sbuf2);
-	fflush(stdout);
 
-    encread(&sbuf.st_ino,sizeof(sbuf.st_ino), inf);
-    encread(&sbuf.st_dev,sizeof(sbuf.st_dev), inf);
-    encread(&sbuf.st_ctime,sizeof(sbuf.st_ctime), inf);
-    encread(&sbuf.st_mtime,sizeof(sbuf.st_mtime), inf);
-    encread(&slines,sizeof(slines),inf);
-    encread(&scols,sizeof(scols),inf);
+	encread(&sbuf.st_ino,sizeof(sbuf.st_ino), inf);
+	encread(&sbuf.st_dev,sizeof(sbuf.st_dev), inf);
+	encread(&sbuf.st_ctime,sizeof(sbuf.st_ctime), inf);
+	encread(&sbuf.st_mtime,sizeof(sbuf.st_mtime), inf);
+	encread(&slines,sizeof(slines),inf);
+	encread(&scols,sizeof(scols),inf);
 
 	/*
 	 * we do not close the file so that we will have a hold of the
 	 * inode for as long as possible
 	 */
+
 	if (!wizard)
 	{
 		if(sbuf2.st_ino!=sbuf.st_ino || sbuf2.st_dev!=sbuf.st_dev) {
@@ -237,6 +235,10 @@ char *file, **envp;
 			return FALSE;
 		}
 	}
+
+#ifdef __INTERIX
+	setenv("TERM","interix");
+#endif
 
 	initscr();
 
@@ -259,8 +261,7 @@ char *file, **envp;
 	cw = newwin(LINES, COLS, 0, 0);
 	mw = newwin(LINES, COLS, 0, 0);
 	hw = newwin(LINES, COLS, 0, 0);
-	nocrmode();
-	
+
 	mpos = 0;
 	mvwprintw(cw, 0, 0, "%s: %s", file, ctime(&sbuf2.st_mtime));
 
@@ -282,9 +283,14 @@ char *file, **envp;
 		printf("Cannot restore file\n");
 		return(FALSE);
 	}
-	
+
+#if defined(__CYGWIN__) || defined(__DJGPP__)
+	close(inf);
+#endif
 	if (!wizard)
 	{
+#ifndef __DJGPP__
+			endwin();
 			while((pid = fork()) < 0)
 				sleep(1);
 
@@ -307,6 +313,14 @@ char *file, **envp;
 					return FALSE;
 				}
 			}
+#else
+		if (unlink(file) < 0)
+		{
+			printf("Cannot unlink file\n");
+			return FALSE;
+		}
+#endif
+
 	}
 
 	environ = envp;
