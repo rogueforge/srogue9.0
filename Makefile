@@ -23,7 +23,7 @@ OBJS= vers.o armor.o chase.o command.o daemon.o daemons.o disply.o encumb.o \
 CFILES= vers.c armor.c chase.c command.c daemon.c daemons.c disply.c encumb.c \
       fight.c global.c init.c io.c list.c main.c misc.c monsters.c move.c \
       new_leve.c options.c pack.c passages.c potions.c pstats.c rings.c rip.c \
-      rooms.c save.c scrolls.c state.c sticks.c things.c trader.o weapons.c \
+      rooms.c save.c scrolls.c state.c sticks.c things.c trader.c weapons.c \
       wizard.c xcrypt.c
 
 MISC=	Makefile LICENSE.TXT rogue.nr
@@ -73,6 +73,10 @@ dist.irix:
 	tbl rogue.nr | nroff -mm | colcrt - > $(PROGRAM).doc
 	tar cf $(DISTNAME)-irix.tar $(PROGRAM) LICENSE.TXT $(PROGRAM).doc
 	gzip -f $(DISTNAME)-irix.tar
+
+debug.aix:
+	make clean
+	make CC=xlc CFLAGS="-qmaxmem=16768 -g -DWIZARD  -qstrict" $(PROGRAM)
 
 dist.aix:
 	make clean
