@@ -20,6 +20,8 @@
 #include <stdio.h>
 #include <signal.h>
 #include <pwd.h>
+#include <limits.h>
+#include <sys/stat.h>
 #include "rogue.h"
 
 #ifdef ATT
@@ -33,8 +35,6 @@
 #endif
 
 #include "rogue.ext"
-
-#define SCOREFILE "/usr/games/rogue_score"
 
 struct termios terminal;
 
@@ -51,6 +51,11 @@ char **envp;
 	char *getpass(), *xcrypt(), *strrchr();
 	int lowtime;
 	time_t now;
+        char *roguehome();
+	char *homedir = roguehome();
+
+	if (homedir == NULL)
+        	homedir = "";
 
 	playuid = getuid();
 
@@ -62,7 +67,11 @@ char **envp;
 
 	/* check for print-score option */
 
-	strcpy(scorefile, SCOREFILE);
+	strcpy(scorefile, homedir);
+
+	if (*scorefile)
+		strcat(scorefile,"/");
+	strcat(scorefile, "srogue90.scr");
 
 	if(argc >= 2 && strcmp(argv[1], "-s") == 0)
 	{
@@ -81,7 +90,7 @@ char **envp;
 
 	if (argc >= 2 && strcmp(argv[1],"-w") == 0)
 	{
-		if (strcmp(PASSWD, xcrypt(getpass(wizstr),"yo")) == 0)
+		if (strcmp(PASSWD, xcrypt(getpass(wizstr),"mT")) == 0)
 		{
 			wizard = TRUE;
 			argv++;
@@ -102,7 +111,7 @@ char **envp;
 
 	strcat(home, "/");
 	strcpy(file_name, home);
-	strcat(file_name, ".rogue.save");
+	strcat(file_name, "rogue.sav");
 
 	if ((env = getenv("ROGUEOPTS")) != NULL)
 		parse_opts(env);
@@ -129,10 +138,9 @@ char **envp;
 		atoi(getenv("SEED")) : lowtime + getpid());
 
 	if(wizard)
-		printf("Hello %s, welcome to dungeon #%d\n", whoami, dnum);
+		printf("Hello %s, welcome to dungeon #%d\n\n", whoami, dnum);
 	else
-		printf("Hello %s, One moment while I open the door to the dungeon...\n",
-		   whoami);
+		printf("Hello %s, One moment while I open the door to the dungeon...\n\n", whoami);
 
 	fflush(stdout);
 	seed = dnum;
@@ -384,3 +392,52 @@ author()
 			return FALSE;
 	}
 }
+
+int
+directory_exists(char *dirname)
+{
+    struct stat sb;
+
+    if (stat(dirname, &sb) == 0) /* path exists */
+        return (S_ISDIR (sb.st_mode));
+
+    return(0);
+}
+
+char *
+roguehome()
+{
+    static char path[1024];
+    char *end,*home;
+
+    if ( (home = getenv("ROGUEHOME")) != NULL)
+    {
+        if (*home)
+        {
+            strncpy(path, home, PATH_MAX - 20);
+
+            end = &path[strlen(path)-1];
+
+
+            while( (end >= path) && ((*end == '/') || (*end == '\\')))
+                *end-- = '\0';
+
+            if (directory_exists(path))
+                return(path);
+        }
+    }
+
+    if (directory_exists("/var/games/roguelike"))
+        return("/var/games/roguelike");
+    if (directory_exists("/var/lib/roguelike"))
+        return("/var/lib/roguelike");
+    if (directory_exists("/var/roguelike"))
+        return("/var/roguelike");
+    if (directory_exists("/usr/games/lib"))
+        return("/usr/games/lib");
+    if (directory_exists("/games/roguelik"))
+        return("/games/roguelik");
+
+    return(NULL);
+}
+
