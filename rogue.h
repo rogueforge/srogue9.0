@@ -22,16 +22,24 @@
 #include <ctype.h>
 #include <curses.h>
 
-#define reg     register        /* register abbr.       */
-
 #ifdef ATT
 #define	CBREAK	FALSE
 #define _IOSTRG	01
 #endif
 
+#define reg     register        /* register abbr.       */
+
 /*
  * Maximum number of different things
  */
+
+#define NCOLORS		32
+#define NSYLS       159
+#define NSTONES     35
+#define NWOOD       24
+#define NMETAL      15
+
+#define MAXDAEMONS 20
 
 #define TYPETRAPS	9	/* max types of traps */
 #define MAXROOMS	9	/* max rooms per level */
@@ -218,7 +226,7 @@
 /*
  * Various constants
  */
-#define	PASSWD		"yoC.nXvKF36pM"
+#define	PASSWD		"mTuZ7WUV9RWkQ"
 #define BEARTIME	3
 #define SLEEPTIME	5
 #define HEALTIME	30
@@ -461,6 +469,12 @@
  * Now we define the structures and types
  */
 
+struct delayed_action {
+	int d_type;
+	int (*d_func)();
+	int d_arg;
+	int d_time;
+};
 
 /*
  * Help list
@@ -517,7 +531,7 @@ struct magic_info {
  */
 struct rod {
 	char *ws_type;		/* either "staff" or "wand" */
-	const char *ws_made;		/* "mahogany", etc */
+	char *ws_made;		/* "mahogany", etc */
 	int	 ws_vol;		/* volume of this type stick */
 	int  ws_wght;		/* weight of this type stick */
 };
@@ -591,7 +605,7 @@ struct stats {
 	int s_maxhp;		/* max value of hit points */
 	int s_pack;			/* current weight of his pack */
 	int s_carry;		/* max weight he can carry */
-	char *s_dmg;		/* String describing damage done */
+	char s_dmg[16];		/* String describing damage done */
 };
 
 /*
@@ -612,6 +626,7 @@ struct thing {
 	char t_type;				/* What it is */
 	char t_disguise;			/* What mimic looks like */
 	char t_oldch;				/* Char that was where it was */
+	char t_reserved;
 };
 
 /*
@@ -631,8 +646,8 @@ struct monster {
  */
 struct object {
 	struct coord o_pos;		/* Where it lives on the screen */
-	char *o_damage;			/* Damage if used like sword */
-	char *o_hurldmg;		/* Damage if thrown */
+	char o_damage[8];		/* Damage if used like sword */
+	char o_hurldmg[8];		/* Damage if thrown */
 	char *o_typname;		/* name this thing is called */
 	int o_type;				/* What kind of object it is */
 	int o_count;			/* Count for plural objects */
