@@ -580,11 +580,24 @@ be here without the savage attack that he has put on this game.
 .H 1 FILES
 .BL
 .LI
-\f3/usr/games/rogue:\f1             Rogue game (object)
+\f3srogue:\f1             Rogue game (object)
 .LI
-\f3/usr/games/lib/rogue_score:\f1   Score file
+\f3Rogue score file search for as follows:\f1
+\f3$ROGUEHOME/srogue.scr \f1
+.br 
+\f3/var/games/roguelike/srogue.scr \f1
+.br 
+\f3/var/lib/roguelike/srogue.scr \f1
+.br 
+\f3/var/roguelike/srogue.scr \f1
+.br  .br 
+\f3/usr/games/lib/srogue.scr \f1
+.br 
+\f3/games/roguelik/srogue.scr \f1
+.br 
+\f3srogue.scr:\f1 
 .LI
-\f3rogue.save or .rogue.save:\f1    Rogue save file
+\f3srogue.sav (user defineable):\f1    Rogue save file
 .LE
 .H 1 BUGS
 As of the release of this memo, there are no known bugs.
