@@ -106,7 +106,7 @@ WINDOW *awin;
 	/*
 	 * loop reading in the string, and put it in a temporary buffer
 	 */
-	for (sp = buf; (c=readchar()) != '\n' && c != '\r' && c != ESCAPE;
+	for (sp = buf; (c=wgetch(awin)) != '\n' && c != '\r' && c != ESCAPE;
 	  wclrtoeol(awin), draw(awin)) {
 		if (( (int)sp - (int)buf ) >= 50) {
 			*sp = '\0';			/* line was too long */
