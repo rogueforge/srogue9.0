@@ -138,9 +138,9 @@ char **envp;
 		atoi(getenv("SEED")) : lowtime + getpid());
 
 	if(wizard)
-		printf("Hello %s, welcome to dungeon #%d\n\n", whoami, dnum);
+		printf("Hello %s, welcome to dungeon #%d\n", whoami, dnum);
 	else
-		printf("Hello %s, One moment while I open the door to the dungeon...\n\n", whoami);
+		printf("Hello %s, One moment while I open the door to the dungeon...\n", whoami);
 
 	fflush(stdout);
 	seed = dnum;
@@ -301,6 +301,9 @@ void
 byebye(how)
 int how;
 {
+	if (!isendwin())
+		endwin();
+
 	exit(how);		/* exit like flag says */
 }
 
