@@ -23,7 +23,7 @@
  * msg:
  *	Display a message at the top of the screen.
  */
-static unsigned char msgbuf[BUFSIZ];
+static char msgbuf[BUFSIZ];
 static int newpos = 0;
 
 msg(char *fmt, ...)
