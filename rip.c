@@ -22,6 +22,7 @@
 #include "rogue.h"
 #include "rogue.ext"
 
+static char scoreline[100];
 
 static char *rip[] = {
 "                          ____________________",
@@ -42,7 +43,7 @@ static char *rip[] = {
 "                    |                              |",
 "                    |                              |",
 "                   *|     *     *     *     *      |*",
-"            _______)\\\\//\\\\//\\)//\\\\//)/\\\\//\\\\)/\\\\//\\\\)/\\\\//\\\\//(________",
+"          ________)\\\\//\\//\\)/\\//\\)/\\//\\)/\\//\\)/\\//\\//(________",
 };
 
 #define RIP_LINES (sizeof rip / (sizeof (char *)))
@@ -77,25 +78,24 @@ char monst;
 	purse -= purse/10;
 	sprintf(buf, "%d Gold Pieces", purse);
 	mvaddstr(16, 36 - ((strlen(buf) + 1) / 2), buf);
-	sprintf(prbuf, "%d/%d/%d", lt->tm_mon + 1, lt->tm_mday, lt->tm_year);
+	sprintf(prbuf, "%d/%d/%d", lt->tm_mon + 1, lt->tm_mday, 1900+lt->tm_year);
 	mvaddstr(18, 32, prbuf);
 	move(LINES-1, 0);
 	refresh();
 	score(purse, KILLED, monst);
-	endwin();
 	byebye(0);
 }
 
 /*
  * top ten entry structure
  */
-struct sc_ent {
+static struct sc_ent {
 	int sc_score;			/* gold */
 	char sc_name[LINLEN];		/* players name */
 	int sc_flags;			/* reason for being here */
 	int sc_level;			/* dungeon level */
 	int sc_uid;			/* user ID */
-	unsigned char sc_monster;	/* killer */
+	unsigned char sc_monster;       /* killer */
 	int sc_explvl;			/* experience level */
 	long int sc_exppts;		/* experience points */
 	time_t sc_date;			/* time this score was posted */
@@ -130,17 +130,17 @@ int amount, aflag;
 			packend = "at your untimely demise";
 		mvaddstr(LINES - 1, 0, retstr);
 		refresh();
-		wgetnstr(stdscr, prbuf,80);
+		wgetnstr(stdscr,prbuf,80);
 		oldpurse = purse;
 		showpack(FALSE, packend);
 	}
 	/*
 	 * Open file and read list
 	 */
-	if ((fd = open(scorefile, O_RDWR)) < 0)
+	if ((fd = open(scorefile, O_RDWR | O_CREAT, 0666)) < 0)
 		return;
 	outf = (FILE *) fdopen(fd, "w");
-	for (scp = top_ten; scp < &top_ten[10]; scp++) {
+	for (scp = top_ten; scp <= &top_ten[9]; scp++) {
 		scp->sc_score = 0;
 		for (i = 0; i < 80; i++)
 			scp->sc_name[i] = rnd(255);
@@ -156,15 +156,27 @@ int amount, aflag;
 	if (author() || wizard)
 		if (strcmp(prbuf, "names") == 0)
 			prflags = 1;
-	read(fd, (char *) top_ten, sizeof(top_ten));
+        for(i = 0; i < 10; i++)
+        {
+            unsigned int mon;
+
+            encread((char *) &top_ten[i].sc_name, LINLEN, fd);
+            encread((char *) scoreline, 100, fd);
+            sscanf(scoreline, " %d %d %d %d %u %d %ld %lx \n",
+                &top_ten[i].sc_score,   &top_ten[i].sc_flags,
+                &top_ten[i].sc_level,   &top_ten[i].sc_uid,
+                &mon,                   &top_ten[i].sc_explvl,
+                &top_ten[i].sc_exppts,  &top_ten[i].sc_date);
+            top_ten[i].sc_monster = mon;
+        }
 	/*
 	 * Insert it in list if need be
 	 */
 	if (!waswizard) {
-		for (scp = top_ten; scp < &top_ten[10]; scp++)
+		for (scp = top_ten; scp <= &top_ten[9]; scp++)
 			if (amount > scp->sc_score)
 				break;
-			if (scp < &top_ten[10]) {
+			if (scp <= &top_ten[9]) {
 				for (sc2 = &top_ten[9]; sc2 > scp; sc2--)
 					*sc2 = *(sc2-1);
 				scp->sc_score = amount;
@@ -182,9 +194,19 @@ int amount, aflag;
 		}
 	}
 	ignore();
-	lseek(fd, 0L, 0);
-	write(fd, (char *) top_ten, sizeof(top_ten));
-	close(fd);
+	fseek(outf, 0L, 0);
+        for(i = 0; i < 10; i++)
+        {
+            memset(scoreline,0,100);
+            encwrite((char *) top_ten[i].sc_name, LINLEN, outf);
+            sprintf(scoreline, " %d %d %d %d %u %d %ld %lx \n",
+                top_ten[i].sc_score, top_ten[i].sc_flags,
+                top_ten[i].sc_level, top_ten[i].sc_uid,
+                top_ten[i].sc_monster, top_ten[i].sc_explvl,
+                top_ten[i].sc_exppts, top_ten[i].sc_date);
+            encwrite((char *) scoreline, 100, outf);
+        }
+	fclose(outf);
 	signal(SIGINT, byebye);
 	signal(SIGQUIT, byebye);
 	clear();
@@ -200,16 +222,28 @@ int amount, aflag;
 showtop(showname)
 int showname;
 {
-	reg int fd;
+	reg int fd, i;
 	char *killer;
 	struct sc_ent *scp;
 
 	if ((fd = open(scorefile, O_RDONLY)) < 0)
 		return FALSE;
-	read(fd, (char *) top_ten, sizeof(top_ten));
+       
+        for(i = 0; i < 10; i++)
+        {
+            unsigned int mon;
+            encread((char *) &top_ten[i].sc_name, LINLEN, fd);
+            encread((char *) scoreline, 100, fd);
+            sscanf(scoreline, " %d %d %d %d %u %d %ld %lx \n",
+                &top_ten[i].sc_score,   &top_ten[i].sc_flags,
+                &top_ten[i].sc_level,   &top_ten[i].sc_uid,
+                &mon,                   &top_ten[i].sc_explvl,
+                &top_ten[i].sc_exppts,  &top_ten[i].sc_date);
+            top_ten[i].sc_monster = mon;
+        }
 	close(fd);
 	printf("Top Ten Adventurers:\nRank\tScore\tName\n");
-	for (scp = top_ten; scp < &top_ten[10]; scp++) {
+	for (scp = top_ten; scp <= &top_ten[9]; scp++) {
 		if (scp->sc_score > 0) {
 			printf("%d\t%d\t%s: %s\t\t--> %s on level %d",
 			  scp - top_ten + 1, scp->sc_score, scp->sc_name,
@@ -254,16 +288,15 @@ addstr("                                                               \n");
 addstr("     Congratulations, you have made it to the light of day!    \n");
 addstr("\nYou have joined the elite ranks of those who have escaped the\n");
 addstr("Dungeons of Doom alive.  You journey home and sell all your loot at\n");
-
+addstr("a great profit and are admitted to the fighters guild.\n");
 
 	mvaddstr(LINES - 1, 0,spacemsg);
 	refresh();
-	wait_for(' ');
+	wait_for(stdscr, ' ');
 	clear();
 	oldpurse = purse;
 	showpack(TRUE, NULL);
 	score(purse, WINNER, 0);
-	endwin();
 	byebye(0);
 }
 
@@ -305,14 +338,12 @@ char *howso;
 			cnt = 1;
 			mvaddstr(LINES - 1, 0, morestr);
 			refresh();
-			wait_for(' ');
+			wait_for(stdscr, ' ');
 			clear();
 		}
 	}
 	mvprintw(cnt + 1,0,"--- %d  Gold Pieces ---",oldpurse);
-	mvaddstr(LINES - 1, 0, retstr);
 	refresh();
-	wgetnstr(stdscr, prbuf,80);
 }
 
 /*
@@ -336,5 +367,5 @@ unsigned char monst;
 			case K_STONE: 	return "transmogrification to stone";
 			case K_STARVE:	return "starvation";
 	}
-	return "Bob Kindelberger ihnp4!akgua!bcs3b2!rdk";
+	return "Bob Kindelberger";
 }
