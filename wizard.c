@@ -331,7 +331,7 @@ struct thing *th;
 			unhold('F');
 		count = 0;
 		running = FALSE;
-		flush_type();			/* flush typeahead */
+		flushinp();			/* flush typeahead */
 		nochange = FALSE;
 	}
 	else
@@ -347,8 +347,7 @@ passwd()
 {
 	reg char *sp, c;
 	bool passok;
-	char buf[LINLEN], *crypt();
-        extern char *xcrypt();
+	char buf[LINLEN], *xcrypt();
 
 	msg(wizstr);
 	mpos = 0;
@@ -364,7 +363,7 @@ passwd()
 		passok = FALSE;
 	else {
 		*sp = '\0';
-		passok = (strcmp(PASSWD, xcrypt(buf, "yo")) == 0);
+		passok = (strcmp(PASSWD, xcrypt(buf, "mT")) == 0);
 	}
 	return passok;
 }
