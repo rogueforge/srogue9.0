@@ -429,8 +429,7 @@ rs_write_string(FILE *savef, char *s)
 }
 
 int
-rs_write_string_index(FILE *savef, const char *master[], int max, 
-                      const char *str)
+rs_write_string_index(FILE *savef, char *master[], int max, char *str)
 {
     int i;
 
@@ -809,8 +808,7 @@ rs_read_new_string(int inf, char **s)
 }
 
 int
-rs_read_string_index(int inf, const char *master[], int maxindex, 
-                     const char **str)
+rs_read_string_index(int inf, char *master[], int maxindex, char **str)
 {
     int i;
 
@@ -1229,7 +1227,7 @@ rs_write_magic_items(FILE *savef, struct magic_item *i, int count)
 
     for(n = 0; n < count; n++)
     {
-        // mi_name is constant, defined at compile time in all cases
+        /* mi_name is constant, defined at compile time in all cases */
         rs_write_int(savef,i[n].mi_prob);
     }
     
@@ -2144,17 +2142,14 @@ rs_save_file(FILE *savef)
     rs_write_object_reference(savef, player.t_pack, cur_ring[1]);
     assert(him == &player.t_stats);
     rs_write_traps(savef, traps, MAXTRAPS);             
-
     rs_write_int(savef, level);
     rs_write_int(savef, levcount);
     rs_write_int(savef, levtype);
     rs_write_int(savef, trader);
     rs_write_int(savef, curprice);
     rs_write_int(savef, purse);
-    rs_write_int(savef, mpos);
     rs_write_int(savef, ntraps);
     rs_write_int(savef, packvol);
-    rs_write_int(savef, total);
     rs_write_int(savef, demoncnt);
     rs_write_int(savef, lastscore);
     rs_write_int(savef, no_food);
@@ -2176,10 +2171,6 @@ rs_save_file(FILE *savef)
     rs_write(savef, prbuf, LINLEN);
     rs_write(savef, whoami, LINLEN);
     rs_write(savef, fruit, LINLEN);
-    rs_write(savef, huh, LINLEN);
-    rs_write(savef, file_name, LINLEN);
-    rs_write(savef, scorefile, LINLEN);
-    rs_write(savef, home, LINLEN);
     
     rs_write_boolean(savef, isfight); 
     rs_write_boolean(savef, nlmove);
@@ -2187,7 +2178,11 @@ rs_save_file(FILE *savef)
     rs_write_boolean(savef, inwhgt);
     rs_write_boolean(savef, running);
     rs_write_boolean(savef, playing);
+#ifdef WIZARD
     rs_write_boolean(savef, wizard);
+#else 
+    rs_write_boolean(savef, 0);
+#endif
     rs_write_boolean(savef, after);
     rs_write_boolean(savef, door_stop);
     rs_write_boolean(savef, firstmove);
@@ -2218,7 +2213,6 @@ rs_save_file(FILE *savef)
     rs_write_magic_items(savef, ws_magic, MAXSTICKS+1);
 
     rs_write_window(savef, cw);
-    rs_write_window(savef, hw);
     rs_write_window(savef, mw);
     rs_write_window(savef, stdscr);
 
@@ -2227,6 +2221,7 @@ rs_save_file(FILE *savef)
 
 rs_restore_file(int inf)
 {
+    bool junk;
     int endian = 0x01020304;
     big_endian = ( *((char *)&endian) == 0x01 );
     
@@ -2251,10 +2246,8 @@ rs_restore_file(int inf)
     rs_read_int(inf, &trader);
     rs_read_int(inf, &curprice);
     rs_read_int(inf, &purse);
-    rs_read_int(inf, &mpos);
     rs_read_int(inf, &ntraps);
     rs_read_int(inf, &packvol);
-    rs_read_int(inf, &total);
     rs_read_int(inf, &demoncnt);
     rs_read_int(inf, &lastscore);
     rs_read_int(inf, &no_food);
@@ -2276,10 +2269,6 @@ rs_restore_file(int inf)
     rs_read(inf, prbuf, LINLEN);
     rs_read(inf, whoami, LINLEN);
     rs_read(inf, fruit, LINLEN);
-    rs_read(inf, huh, LINLEN);
-    rs_read(inf, file_name, LINLEN);
-    rs_read(inf, scorefile, LINLEN);
-    rs_read(inf, home, LINLEN);
     
     rs_read_boolean(inf, &isfight); 
     rs_read_boolean(inf, &nlmove);
@@ -2287,7 +2276,11 @@ rs_restore_file(int inf)
     rs_read_boolean(inf, &inwhgt);
     rs_read_boolean(inf, &running);
     rs_read_boolean(inf, &playing);
+#ifdef WIZARD
     rs_read_boolean(inf, &wizard);
+#else
+    rs_read_boolean(inf, &junk);
+#endif
     rs_read_boolean(inf, &after);
     rs_read_boolean(inf, &door_stop);
     rs_read_boolean(inf, &firstmove);
@@ -2318,7 +2311,6 @@ rs_restore_file(int inf)
     rs_read_magic_items(inf, ws_magic, MAXSTICKS+1);
 
     rs_read_window(inf, cw);
-    rs_read_window(inf, hw);
     rs_read_window(inf, mw);
     rs_read_window(inf, stdscr);
 
