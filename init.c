@@ -18,7 +18,7 @@
 #include "rogue.h"
 #include "rogue.ext"
 
-static const char *rainbow[] = {
+char *rainbow[NCOLORS] = {
 	"Red",		"Blue",		"Green",	"Yellow",
 	"Black",	"Brown",	"Orange",	"Pink",
 	"Purple",	"Grey",		"White",	"Silver",
@@ -28,9 +28,8 @@ static const char *rainbow[] = {
 	"Aquamarine", "Scarlet","Khaki",	"Crimson",
 	"Indigo",	"Beige",	"Lavender",	"Saffron",
 };
-#define NCOLORS (sizeof rainbow / (sizeof (char *)))
 
-static char *sylls[] = {
+char *sylls[NSYLS] = {
 	"a", "ab", "ag", "aks", "ala", "an", "ankh", "app", "arg", "arze",
 	"ash", "ban", "bar", "bat", "bek", "bie", "bin", "bit", "bjor",
 	"blu", "bot", "bu", "byt", "comp", "con", "cos", "cre", "dalf",
@@ -49,9 +48,8 @@ static char *sylls[] = {
 	"wed", "werg", "wex", "whon", "wun", "xo", "y", "yot", "yu",
 	"zant", "zap", "zeb", "zim", "zok", "zon", "zum",
 };
-#define NSYLS (sizeof sylls / (sizeof (char *)))
 
-const char *stones[] = {
+char *stones[] = {
 	"Agate",		"Alexandrite",	"Amethyst",
 	"Azurite",		"Carnelian",	"Chrysoberyl",
 	"Chrysoprase",	"Citrine",		"Diamond",
@@ -65,9 +63,8 @@ const char *stones[] = {
 	"Spinel",		"Tiger eye",	"Topaz",
 	"Tourmaline",	"Turquoise",
 };
-#define NSTONES (sizeof stones / (sizeof (char *)))
 
-static const char *wood[] = {
+char *wood[NWOOD] = {
 	"Avocado wood",	"Balsa",	"Banyan",		"Birch",
 	"Cedar",		"Cherry",	"Cinnibar",		"Dogwood",
 	"Driftwood",	"Ebony",	"Eucalyptus",	"Hemlock",
@@ -75,15 +72,13 @@ static const char *wood[] = {
 	"Oak",			"Pine",		"Redwood",		"Rosewood",
 	"Teak",			"Walnut",	"Zebra wood", 	"Persimmon wood",
 };
-#define NWOOD (sizeof wood / (sizeof (char *)))
 
-static const char *metal[] = {
+char *metal[NMETAL] = {
 	"Aluminium",	"Bone",		"Brass",	"Bronze",
 	"Copper",		"Chromium",	"Iron",		"Lead",
 	"Magnesium",	"Pewter",	"Platinum",	"Steel",
 	"Tin",			"Titanium",	"Zinc",
 };
-#define NMETAL (sizeof metal / (sizeof (char *)))
 
 /*
  * init_everything:
@@ -224,7 +219,7 @@ init_stones()
 init_materials()
 {
 	int i, j;
-	const char *str;
+	char *str;
 	struct rod *rd;
 	bool metused[NMETAL], woodused[NWOOD];
 
@@ -306,7 +301,7 @@ init_player()
 	him->s_re.a_wis = pinit();		/* wisdom */
 	him->s_re.a_con = pinit();		/* constitution */
 	him->s_ef = him->s_re;			/* effective = real */
-	him->s_dmg = "1d4";
+	strcpy(him->s_dmg, "1d4");
 	him->s_arm = NORMAC;
 	him->s_carry = totalenc();
 	him->s_pack = 0;
