@@ -1,10 +1,20 @@
-/* EMACS_MODES: !fill,tabstop=4,c */
 /*
  * Various input/output functions
  *
  * @(#)io.c	9.0	(rdk)	 7/17/84
+ *
+ * Super-Rogue
+ * Copyright (C) 1984 Robert D. Kindelberger
+ * All rights reserved.
+ *
+ * Based on "Rogue: Exploring the Dungeons of Doom"
+ * Copyright (C) 1980, 1981 Michael Toy, Ken Arnold and Glenn Wichman
+ * All rights reserved.
+ *
+ * See the file LICENSE.TXT for full copyright and licensing information.
  */
 
+#include <stdarg.h>
 #include <ctype.h>
 #include "rogue.h"
 #include "rogue.ext"
@@ -16,10 +26,9 @@
 static unsigned char msgbuf[BUFSIZ];
 static int newpos = 0;
 
-msg(fmt, args)
-char *fmt;
-int args;
+msg(char *fmt, ...)
 {
+	va_list ap;
 	/*
 	 * if the string is "", just clear the line
 	 */
@@ -32,7 +41,9 @@ int args;
 	/*
 	 * otherwise add to the message and flush it out
 	 */
-	doadd(fmt, &args);
+	va_start(ap, fmt);
+	doadd(fmt, ap);
+	va_end(ap);
 	endmsg();
 }
 
@@ -40,11 +51,13 @@ int args;
  * addmsg:
  *	Add things to the current message
  */
-addmsg(fmt, args)
-char *fmt;
-int args;
+addmsg(char *fmt, ...)
 {
-	doadd(fmt, &args);
+	va_list ap;
+
+	va_start(ap, fmt);
+	doadd(fmt, ap);
+	va_end(ap);
 }
 
 /*
@@ -59,7 +72,7 @@ endmsg()
 		wmove(cw, 0, mpos);
 		waddstr(cw, morestr);
 		draw(cw);
-		wait_for(' ');
+		wait_for(cw, ' ');
 	}
 	mvwaddstr(cw, 0, 0, msgbuf);
 	wclrtoeol(cw);
@@ -72,26 +85,9 @@ endmsg()
  * doadd:
  *	Perform a printf into a buffer
  */
-doadd(fmt, args)
-char *fmt;
-int **args;
+doadd(char *fmt, va_list ap)
 {
-	static FILE junk;
-
-#ifdef BSD
-	junk._flag = _IOWRT + _IOSTRG;
-#endif
-#ifdef ATT
-	junk._flag = _IOWRT;
-#endif
-	junk._file = _NFILE;
-/*
-	(unsigned char *)junk._ptr = &msgbuf[newpos];
-*/
-	junk._ptr = &msgbuf[newpos];
-	junk._cnt = 32767;
-	_doprnt(fmt, args, &junk);
-	putc('\0', &junk);
+	vsprintf(&msgbuf[newpos], fmt, ap);
 	newpos = strlen(msgbuf);
 }
 
@@ -100,7 +96,7 @@ int **args;
  *	Returns TRUE if it is ok to step on ch
  */
 step_ok(ch)
-char ch;
+unsigned char ch;
 {
 	if (dead_end(ch))
 		return FALSE;
@@ -135,9 +131,7 @@ readchar()
 	char c;
 
 	fflush(stdout);
-	while (read(0, &c, 1) < 0)
-		continue;
-	return c;
+        return( wgetch(cw) );
 }
 
 char *hungstr[] = {
@@ -237,7 +231,7 @@ dispmax()
  * 	Returns TRUE if a char shouldn't show on the screen
  */
 illeg_ch(ch)
-char ch;
+unsigned char ch;
 {
 	if (ch < 32 || ch > 127)
 		return TRUE;
@@ -250,19 +244,21 @@ char ch;
  * wait_for:
  *	Sit around until the guy types the right key
  */
-wait_for(ch)
+wait_for(win,ch)
+WINDOW *win;
 char ch;
 {
 	register char c;
 
 	if (ch == '\n')
-	    while ((c = readchar()) != '\n' && c != '\r')
+	    while ((c = wgetch(win)) != '\n' && c != '\r')
 			continue;
 	else
-	    while (readchar() != ch)
+	    while (wgetch(win) != ch)
 			continue;
 }
 
+#ifdef NEED_GETTIME
 #include <stdio.h>
 #include <pwd.h>
 
@@ -288,6 +284,7 @@ gettime()
 	timeptr = ctime(&now);	/* convert to string */
 	return timeptr;		/* return the string */
 }
+#endif
 
 
 /*
@@ -300,7 +297,7 @@ char *message;
 {
 	mvwaddstr(scr,LINES-1,0,message);
 	draw(scr);
-	wait_for(' ');	
+	wait_for(scr,' ');	
 }
 
 
