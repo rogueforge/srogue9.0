@@ -159,12 +159,14 @@ char **envp;
 
 	if (strcmp(termname(),"dumb") == 0)
 	{
+		endwin();
 		printf("ERROR in terminal parameters.\n");
 		printf("Check TERM in environment.\n");
 		byebye(1);
 	}
 
 	if (LINES < 24 || COLS < 80) {
+		endwin();
 		printf("ERROR: screen size too small\n");
 		byebye(1);
 	}
@@ -299,10 +301,6 @@ void
 byebye(how)
 int how;
 {
-	EXTBOOL _endwin;
-
-	endwin();
-
 	exit(how);		/* exit like flag says */
 }
 
@@ -379,6 +377,8 @@ setup()
 playit()
 {
 	reg char *opts;
+
+	tcgetattr(0,&terminal);
 
 
 	/* parse environment declaration of options */
