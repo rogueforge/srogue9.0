@@ -17,6 +17,7 @@
 
 #include <time.h>
 #include <termios.h>
+#include <fcntl.h>
 #include <stdio.h>
 #include <signal.h>
 #include <pwd.h>
@@ -53,6 +54,10 @@ char **envp;
 	time_t now;
         char *roguehome();
 	char *homedir = roguehome();
+
+#ifdef __DJGPP__
+	_fmode = O_BINARY;
+#endif
 
 	if (homedir == NULL)
         	homedir = "";
@@ -109,7 +114,12 @@ char **envp;
 	else
 		home[0] = '\0';
 
-	strcat(home, "/");
+        if (strcmp(home,"/") == 0)
+		home[0] = '\0';
+
+        if ((strlen(home) > 0) && (home[strlen(home)-1] != '/'))
+		strcat(home, "/");
+
 	strcpy(file_name, home);
 	strcat(file_name, "srogue.sav");
 
