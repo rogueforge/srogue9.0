@@ -350,7 +350,7 @@ bool treas;
 		case TYP_AMULET:
 			cur->o_type = AMULET;
 			cur->o_hplus = 500;
-			cur->o_hurldmg = "80d8";	/* if thrown, WOW!!! */
+			strcpy(cur->o_hurldmg,"80d8");	/* if thrown, WOW!!! */
 			cur->o_vol = itemvol(cur);
 		when TYP_POTION:
 			cur->o_type = POTION;
@@ -411,7 +411,8 @@ struct object *cur;
 	cur->o_group = newgrp();
 	cur->o_weight = cur->o_vol = 0;
 	cur->o_hplus = cur->o_dplus = 0;
-	cur->o_damage = cur->o_hurldmg = "0d0";
+	strcpy(cur->o_damage,"0d0");
+	strcpy(cur->o_hurldmg,"0d0");
 	cur->o_flags = cur->o_type = cur->o_which = 0;
 }
 
