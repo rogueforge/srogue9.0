@@ -140,9 +140,13 @@ bool pr;
 		attach(lvl_obj, item);
 		return;
 	}
+
 	if (pr)
-		msg("Your %s vanishes as it hits the ground.",
-		  w_magic[obj->o_which].mi_name);
+        if (obj->o_type == WEAPON) /* BUGFIX: Identification trick */
+            msg("Your %s vanishes as it hits the ground.", w_magic[obj->o_which].mi_name);
+        else
+            msg("%s vanishes as it hits the ground.", inv_name(obj,TRUE));
+
 	discard(item);
 }
 
@@ -160,8 +164,8 @@ int type;
 	weap->o_type = WEAPON;
 	weap->o_which = type;
 	iwp = &weaps[type];
-	weap->o_damage = iwp->w_dam;
-	weap->o_hurldmg = iwp->w_hrl;
+	strcpy(weap->o_damage,iwp->w_dam);
+	strcpy(weap->o_hurldmg,iwp->w_hrl);
 	weap->o_launch = iwp->w_launch;
 	weap->o_flags = iwp->w_flags;
 	weap->o_weight = iwp->w_wght;
