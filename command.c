@@ -16,8 +16,12 @@
 
 #include <ctype.h>
 #include <signal.h>
+#include <limits.h>
 #include "rogue.h"
 #include "rogue.ext"
+#ifdef __DJGPP__
+#include <process.h>
+#endif
 
 /*
  * command:
@@ -230,7 +234,7 @@ command()
 					when CTRL('I') :	inventory(lvl_obj, 1);
 					when CTRL('W') :	whatis(NULL);
 					when CTRL('D') :	level++; new_level(NORMLEV);
-					when CTRL('U') :	level--; new_level(NORMLEV);
+					when CTRL('U') :	if (level > 1) level--; new_level(NORMLEV);
 					when CTRL('F') :	displevl();
 					when CTRL('X') :	dispmons();
 					when CTRL('T') :	teleport(rndspot,&player);
@@ -484,7 +488,7 @@ help()
 	wmove(hw, LINES-1, 0);
 	wprintw(hw,spacemsg);
 	draw(hw);
-	wait_for(' ');
+	wait_for(hw,' ');
 	wclear(hw);
 	draw(hw);
 	wmove(cw, 0, 0);
@@ -623,6 +627,7 @@ shell()
 	/*
 	 * Fork and do a shell
 	 */
+#ifndef __DJGPP__
 	while((pid = fork()) < 0)
 		sleep(1);
 	if (pid == 0) {
@@ -639,11 +644,26 @@ shell()
 			continue;
 		signal(SIGINT, quit);
 		signal(SIGQUIT, endit);
+
+#else
+	{
+		char shell[PATH_MAX];
+
+		if (sh && *sh)
+			strncpy(shell,sh,PATH_MAX);
+		else
+			sprintf(shell, "%s\\bin\\sh.exe", getenv("DJDIR"));
+
+		if (spawnl(P_WAIT,shell, "shell", "-i", 0) == -1)
+			msg("No shelly: %s", shell);
+
+#endif
 		printf("\n%s", retstr);
+		fflush(stdout);
 		noecho();
 		crmode();
 		in_shell = FALSE;
-		wait_for('\n');
+		wait_for(cw, '\n');
 		restscr(cw);
 	}
 }
@@ -657,8 +677,7 @@ call()
 {
 	reg struct object *obj;
 	reg struct linked_list *item;
-	reg char **guess;
-	const char *elsewise;
+	reg char **guess, *elsewise;
 	int wh;
 
 	if ((item = get_item("call", 0)) == NULL)
