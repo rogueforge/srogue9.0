@@ -114,7 +114,7 @@ WINDOW *awin;
 			mvwaddstr(awin, 0, 0, "Name was truncated --More--");
 			wclrtoeol(awin);
 			draw(awin);
-			wait_for(' ');
+			wait_for(awin, ' ');
 			mvwprintw(awin, 0, 0, "Called: %s",opt);
 			draw(awin);
 			return NORM;
@@ -222,8 +222,9 @@ int len;
 	reg char *sp;
 
 	while (len-- > 0) {
-		strcpy(s1, (sp = unctrl(*s2++)));
+		strcpy(s1, (sp = unctrl(*s2)));
 		s1 += strlen(sp);
+		s2++;
 	}
 	*s1 = '\0';
 }
