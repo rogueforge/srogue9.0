@@ -1,12 +1,26 @@
+.PH
+.fp 9 CR
 .nr Hu 1
 .nr Pt 0
-.AF ""
 .SA 1
-.TL
-Super-Rogue Version 9.0
-.AU "Robert D. Kindelberger" "" "ihuxa!rdk"
-.MT "A Tutorial on the Visual Game of Rogue - Version 9.0"
-.AB
+.S +4 C
+.ad c
+.B "Super-Rogue Version 9.0"
+.br
+.ad b
+.SP 0.45
+.S -4 C
+.ad c
+.I "Robert D. Kindelberger"
+.br
+.ad b
+.SP 2.6
+.ad c
+.I "A Tutorial on the Visual Game of Rogue - Version 9.0"
+.br
+.ad b
+.SP 2
+.P
 Rogue is a visual CRT based fantasy game which runs
 under the UNIX\*F
 .FS
@@ -15,7 +29,8 @@ UNIX is a trademark of AT&T Bell Laboratories.
 timesharing system.  This paper describes
 how to play rogue and gives a few hints for those who might
 otherwise get lost (or killed) in the Dungeons of Doom.
-.AE
+.SP 5
+.PH "''- % -''"
 .H 1 INTRODUCTION
 .P
 You have just finished your years as a student
@@ -75,6 +90,7 @@ of standard fantasy games.  Here is a sample of what a rogue screen might
 look like:
 .SP
 .DS
+\f9
                   ---------------------
                   |...................+###########+
                   |...@...........[...|
@@ -82,10 +98,11 @@ look like:
                   |...................|
                   --------+------------
                           ####
-			     +
+                             +
 
 Level: 1   Gold: 0    Hp:12(12)  Ac: 6      Exp:1/0    Vol:36%
 Str:16(16) Exp:12(12) Dex:11(11) Wis:14(14) Con:18(18) Carry:50/170
+\f1
 .DE
 .H 1 "THE BOTTOM LINES"
 At the bottom line of the screen is a few pieces of cryptic information,
@@ -179,7 +196,7 @@ as you have explored it so far.
 Each symbol on the screen represents something.  Here is a list of what
 the various symbols mean:
 .bp
-.DS 3 0 0
+.DS
 .B "@   " "This symbol represents you, the adventurer."
 
 .B "|   " "A wall running north/south."
@@ -575,6 +592,7 @@ Going past level 500 would be suicidal.
 .bp
 .H 1 "SHORT REFERENCE OF COMMANDS"
 .DS
+\f9
  ?       prints help               /       identify object
  h       left                      H       run left
  j       down                      J       run down
@@ -600,5 +618,6 @@ Going past level 500 would be suicidal.
 ^r       repeat last message      ^l       redraw screen
 ^[       cancel last command      ^d       return from shell
  !       escape to shell          
+\f1
 .DE
 
