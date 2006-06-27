@@ -29,7 +29,6 @@ read_scroll()
 	reg int i, j, wh;
 	reg char ch, nch;
 	struct room *rp;
-	struct linked_list *titem;
 	char buf[LINLEN];
 	bool bless, curse;
 
@@ -158,7 +157,7 @@ read_scroll()
 			overwrite(stdscr, hw);
 			for (i = 1; i < LINES - 2; i++) {
 				for (j = 0; j < COLS; j++) {
-					switch (nch = ch = mvwinch(hw, i, j)) {
+					switch (nch = ch = (char) mvwinch(hw, i, j)) {
 						case SECRETDOOR:
 							nch = DOOR;
 							mvaddch(i, j, nch);
@@ -212,12 +211,11 @@ read_scroll()
 		}
 	when S_TELEP:
 		if (!curse) {
-			int rm;
-			struct room *cur_room;
+			struct room *cur_room, *new_room;
 
 			cur_room = player.t_room;
-			rm = teleport(rndspot, &player);
-			if (cur_room != &rooms[rm])
+			new_room = teleport(rndspot, &player);
+			if (cur_room != new_room)
 				s_know[S_TELEP] = TRUE;
 		}
 	when S_ENCH:

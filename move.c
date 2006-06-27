@@ -202,7 +202,7 @@ int dy, dx;
 	mvwaddch(cw, nh.y, nh.x, PLAYER);
 	hero = nh;
 	player.t_room = rp;
-	player.t_oldch = mvinch(hero.y, hero.x);
+	player.t_oldch = (char) mvinch(hero.y, hero.x);
 }
 
 /*
@@ -262,13 +262,13 @@ struct coord *cp;
 					mit = THINGPTR(item);
 					if (mit->t_oldch == ' ')
 						if (!rf_on(rp,ISDARK))
-							mit->t_oldch = mvinch(y, x);
+							mit->t_oldch = (char) mvinch(y, x);
 					if (levtype == MAZELEV)
-						ch = mvinch(y, x);
+						ch = (char) mvinch(y, x);
 				}
 			}
 			if (rf_on(rp,ISDARK)) {
-				rch = mvwinch(cw, y, x);
+				rch = (char) mvwinch(cw, y, x);
 				if (isatrap(rch)) {
 					ch = rch;			/* if its a trap */
 				}
@@ -319,7 +319,7 @@ int y, x;
 				if (ch == 's')
 					ch = ' ';		/* shadows show as a blank */
 				else
-					ch = mvinch(y, x);	/* hide invisibles */
+					ch = (char) mvinch(y, x);	/* hide invisibles */
 			}
 		}
 	}
@@ -336,11 +336,10 @@ struct coord *tc;
 {
 	reg struct trap *trp;
 	reg int ch, ishero;
-	struct linked_list *mon;
 	char stuckee[35], seeit, sayso;
 
 	if ((trp = trap_at(tc->y, tc->x)) == NULL)
-		return;
+		return(0);
 	ishero = (th == &player);
 	if (ishero) {
 		strcpy(stuckee, "You");

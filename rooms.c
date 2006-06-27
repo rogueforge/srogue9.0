@@ -27,9 +27,7 @@ do_rooms()
 	bool treas = FALSE;
 	reg int i;
 	reg struct room *rp;
-	reg struct linked_list *item;
-	reg struct thing *tp;
-	struct coord top, bsze, mp;
+	struct coord top, bsze;
 
 	/*
 	 * bsze is the maximum room size

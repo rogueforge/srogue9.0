@@ -173,5 +173,5 @@ do_fuses()
 activity()
 {
 	msg("Daemons = %d : Memory Items = %d : Memory Used = %d",
-	    demoncnt,total,sbrk(0));
+	    demoncnt,total,md_memused());
 }

@@ -103,7 +103,7 @@ char type;
 	tp->t_indx = type;
 	tp->t_pos = *cp;
 	tp->t_room = roomin(cp);
-	tp->t_oldch = mvwinch(cw, cp->y, cp->x);
+	tp->t_oldch = (char) mvwinch(cw, cp->y, cp->x);
 	tp->t_nomove = 0;
 	tp->t_nocmd = 0;
 	mvwaddch(mw, cp->y, cp->x, tp->t_type);
@@ -143,10 +143,10 @@ char type;
 	 * Adjust experience point we get for killing it by the
 	 *  strength of this particular monster by ~~ +- 50%
 	 */
-	killexp = mp->m_stats.s_exp * (0.47 + (float)st->s_hpt /
-		(8 * (float)st->s_lvl));
+	killexp = (float)mp->m_stats.s_exp * (0.47F + (float)st->s_hpt /
+		(8.0F * (float)st->s_lvl));
 
-	st->s_exp = killexp;			/* use float for accuracy */
+	st->s_exp = (long) killexp;			/* use float for accuracy */
 	if(st->s_exp < 1)
 		st->s_exp = 1;				/* minimum 1 experience point */
 	tp->t_flags = mp->m_flags;
@@ -262,7 +262,7 @@ int y, x;
 	 * Hide invisible monsters
 	 */
 	if ((tp->t_flags & ISINVIS) && pl_off(CANSEE))
-		ch = mvinch(y, x);
+		ch = (char) mvinch(y, x);
 	/*
 	 * Let greedy ones guard gold
 	 */
@@ -284,7 +284,7 @@ genocide()
 	reg struct linked_list *ip, *nip;
 	reg struct thing *mp;
 	struct monster *mm;
-	reg int i, ii, c;
+	reg int i, c;
 
 	if (levcount == 0) {
 		mpos = 0;

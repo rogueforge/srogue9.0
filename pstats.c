@@ -358,6 +358,7 @@ hungdam()
 		when F_WEAK:	return -1;
 		when F_FAINT:	return -2;
 	}
+	return(0);
 }
 
 /*

@@ -610,9 +610,7 @@ u_level()
  */
 shell()
 {
-	reg int pid;
 	reg char *sh;
-	int ret_status;
 
 	/*
 	 * Set the terminal back to original mode
@@ -624,48 +622,16 @@ shell()
 	endwin();
 	in_shell = TRUE;
 	fflush(stdout);
-	/*
-	 * Fork and do a shell
-	 */
-#ifndef __DJGPP__
-	while((pid = fork()) < 0)
-		sleep(1);
-	if (pid == 0) {
-		setuid(playuid);	/* Set back to original user */
-		setgid(playgid);
-		execl(sh == NULL ? "/bin/sh" : sh, "shell", "-i", 0);
-		perror("No shelly");
-		byebye(-1);
-	}
-	else {
-		signal(SIGINT, SIG_IGN);
-		signal(SIGQUIT, SIG_IGN);
-		while (wait(&ret_status) != pid)
-			continue;
-		signal(SIGINT, quit);
-		signal(SIGQUIT, endit);
 
-#else
-	{
-		char shell[PATH_MAX];
+	md_shellescape();
 
-		if (sh && *sh)
-			strncpy(shell,sh,PATH_MAX);
-		else
-			sprintf(shell, "%s\\bin\\sh.exe", getenv("DJDIR"));
-
-		if (spawnl(P_WAIT,shell, "shell", "-i", 0) == -1)
-			msg("No shelly: %s", shell);
-
-#endif
-		printf("\n%s", retstr);
-		fflush(stdout);
-		noecho();
-		crmode();
-		in_shell = FALSE;
-		wait_for(cw, '\n');
-		restscr(cw);
-	}
+	printf("\n%s", retstr);
+	fflush(stdout);
+	noecho();
+	crmode();
+	in_shell = FALSE;
+	wait_for(cw, '\n');
+	restscr(cw);
 }
 
 

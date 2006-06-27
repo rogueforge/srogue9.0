@@ -215,7 +215,7 @@ money()
 drop(item)
 struct linked_list *item;
 {
-	reg char ch;
+	reg chtype ch;
 	reg struct linked_list *ll, *nll;
 	reg struct object *op;
 
@@ -443,9 +443,10 @@ struct magic_item *mag;
 {
 	reg struct magic_item *start;
 	reg int i;
+	reg int n = 0;
 
 	start = mag;
-	for (i = rnd(1000); mag->mi_name != NULL; mag++) {
+	for (i = rnd(1000); mag->mi_name != NULL; mag++, n++) {
 		if (i < mag->mi_prob)
 			break;
 		if (mag->mi_name == NULL) {
@@ -454,7 +455,8 @@ struct magic_item *mag;
 					msg("%s: %d%%", mag->mi_name, mag->mi_prob);
 			}
 			mag = start;
+			n = 0; 
 		}
 	}
-	return mag - start;
+	return n;
 }

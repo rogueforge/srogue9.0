@@ -28,6 +28,7 @@
 #endif
 
 #define reg     register        /* register abbr.       */
+#define NOOP(x) (x += 0)
 
 /*
  * Maximum number of different things

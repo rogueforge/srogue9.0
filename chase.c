@@ -67,7 +67,7 @@ struct linked_list *mon;
 	struct trap *trp;
 
 	th = THINGPTR(mon);
-	wound = th->t_flags & ISWOUND;
+	wound = (th->t_flags & ISWOUND) != 0;
 	if (wound)
 		mindist = 0;
 	else
@@ -205,7 +205,7 @@ struct linked_list *mon;
 	}
 	if (pl_off(ISBLIND))
 		mvwaddch(cw,th->t_pos.y,th->t_pos.x,th->t_oldch);
-	sch = mvwinch(cw, ch_ret.y, ch_ret.x);
+	sch = (char) mvwinch(cw, ch_ret.y, ch_ret.x);
 	if (rer != NULL && rf_on(rer,ISDARK) && sch == FLOOR &&
 	  DISTANCE(ch_ret.y,ch_ret.x,th->t_pos.y,th->t_pos.x) < 3 &&
 	  pl_off(ISBLIND))

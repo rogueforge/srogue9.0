@@ -20,7 +20,7 @@
  */
 displevl()
 {
-	reg char ch, mch;
+	reg chtype ch, mch;
 	reg int i,j;
 	reg struct room *rp;
 
@@ -56,7 +56,7 @@ displevl()
 				}
 				else {
 					it = THINGPTR(what);
-					it->t_oldch = ch;
+					it->t_oldch = (char) ch;
 				}
 			}
 			mch = mvwinch(cw, i, j);
@@ -75,7 +75,7 @@ displevl()
  */
 dispmons()
 {
-	reg int ch, y, x;
+	reg int y, x;
 	reg struct thing *it;
 	reg struct linked_list *item;
 
@@ -98,7 +98,7 @@ dispmons()
 winat(y, x)
 int x, y;
 {
-	reg char ch;
+	reg chtype ch;
 
 	if (mvwinch(mw,y,x) == ' ')
 		ch = mvinch(y, x);			/* non-monsters */

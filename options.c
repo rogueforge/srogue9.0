@@ -14,7 +14,6 @@
  * See the file LICENSE.TXT for full copyright and licensing information.
  */
 
-#include <termios.h>
 #include <ctype.h>
 #include "rogue.h"
 #include "rogue.ext"
@@ -108,7 +107,7 @@ WINDOW *awin;
 	 */
 	for (sp = buf; (c=wgetch(awin)) != '\n' && c != '\r' && c != ESCAPE;
 	  wclrtoeol(awin), draw(awin)) {
-		if (( (int)sp - (int)buf ) >= 50) {
+		if (( sp - buf ) >= 50) {
 			*sp = '\0';			/* line was too long */
 			strucpy(opt,buf,strlen(buf));
 			mvwaddstr(awin, 0, 0, "Name was truncated --More--");
@@ -121,7 +120,7 @@ WINDOW *awin;
 		}
 		if (c == -1)
 			continue;
-		else if(c == terminal.c_cc[VERASE])	{	/* process erase char */
+		else if(c == erasechar())	{	/* process erase char */
 			if (sp > buf) {
 				reg int i;
 	
@@ -131,7 +130,7 @@ WINDOW *awin;
 			}
 			continue;
 		}
-		else if (c == terminal.c_cc[VKILL]) {   /* process kill character */
+		else if (c == killchar()) {   /* process kill character */
 			sp = buf;
 			wmove(awin, oy, ox);
 			continue;

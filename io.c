@@ -128,10 +128,8 @@ char ch;
 
 readchar()
 {
-	char c;
-
 	fflush(stdout);
-        return( wgetch(cw) );
+    return( wgetch(cw) );
 }
 
 char *hungstr[] = {

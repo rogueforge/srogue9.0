@@ -208,7 +208,8 @@ bool gotdir;
 	case WS_CANCEL:
 	case WS_MINVIS:
 	{
-		reg char monster, oldch;
+		reg chtype monster;
+		reg char oldch;
 
 		y = hero.y;
 		x = hero.x;
@@ -268,7 +269,7 @@ bool gotdir;
 				tp->t_flags |= ISRUN;
 				mvwaddch(mw, y, x, ' ');
 				mvwaddch(mw, tp->t_pos.y, tp->t_pos.x, monster);
-				tp->t_oldch = mvwinch(cw,tp->t_pos.y,tp->t_pos.x);
+				tp->t_oldch = (char) mvwinch(cw,tp->t_pos.y,tp->t_pos.x);
 			}
 		}
 	}

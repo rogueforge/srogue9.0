@@ -281,7 +281,7 @@ bool isrmv;
 ring_eat()
 {
 	reg struct object *lb;
-	reg int hand, i, howmuch;
+	reg int i, howmuch;
 	bool addit;
 
 	howmuch = 0;

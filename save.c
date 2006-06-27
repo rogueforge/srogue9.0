@@ -14,7 +14,6 @@
  * See the file LICENSE.TXT for full copyright and licensing information.
  */
 
-#include <unistd.h>
 #include <ctype.h>
 #include <fcntl.h>
 #include <sys/types.h>
@@ -23,10 +22,6 @@
 #include <errno.h>
 #include "rogue.h"
 #include "rogue.ext"
-
-#ifdef BSD
-#define srand48(seed)	srandom(seed)
-#endif
 
 EXTCHAR version[];
 EXTCHAR *ctime();
@@ -52,7 +47,6 @@ ignore()
  */
 save_game()
 {
-	reg FILE *savef;
 	reg int c;
 	char buf[LINLEN];
 
@@ -136,8 +130,6 @@ dosave()
 	FILE *savef;
 
 	ignore();
-	setuid(playuid);
-	setgid(playgid);
 	umask(022);
 
 	if (file_name[0] != '\0') {
@@ -184,7 +176,9 @@ FILE *savef;
 	rs_save_file(savef);
 	close(fnum);
 	signal(SIGINT, byebye);
+#ifdef SIGQUIT
 	signal(SIGQUIT, byebye);
+#endif
 	wclear(cw);
 	draw(cw);
 }
@@ -196,8 +190,7 @@ FILE *savef;
 restore(file, envp)
 char *file, **envp;
 {
-	register inf, pid;
-	int ret_status;
+	register inf;
 #ifndef _AIX
 	extern char **environ;
 #endif
@@ -220,27 +213,8 @@ char *file, **envp;
 		return FALSE;
 	}
 
-	fstat(inf, &sbuf2);
-
-	encread(&sbuf.st_ino,sizeof(sbuf.st_ino), inf);
-	encread(&sbuf.st_dev,sizeof(sbuf.st_dev), inf);
-	encread(&sbuf.st_ctime,sizeof(sbuf.st_ctime), inf);
-	encread(&sbuf.st_mtime,sizeof(sbuf.st_mtime), inf);
 	encread(&slines,sizeof(slines),inf);
 	encread(&scols,sizeof(scols),inf);
-
-	/*
-	 * we do not close the file so that we will have a hold of the
-	 * inode for as long as possible
-	 */
-
-	if (!wizard)
-	{
-		if(sbuf2.st_ino!=sbuf.st_ino || sbuf2.st_dev!=sbuf.st_dev) {
-			printf("Sorry, saved game is not in the same file.\n");
-			return FALSE;
-		}
-	}
 
 #ifdef __INTERIX
 	setenv("TERM","interix");
@@ -271,18 +245,6 @@ char *file, **envp;
 	mpos = 0;
 	mvwprintw(cw, 0, 0, "%s: %s", file, ctime(&sbuf2.st_mtime));
 
-	/* defeat multiple restarting from the same place */
-
-	if (!wizard)
-	{
-		if (sbuf2.st_nlink != 1)
-		{
-                        endwin();
-			printf("Cannot restore from a linked file\n");
-			return FALSE;
-		}
-	}
-
 	if (rs_restore_file(inf) == FALSE)
 	{
 		endwin();
@@ -290,50 +252,17 @@ char *file, **envp;
 		return(FALSE);
 	}
 
-#if defined(__CYGWIN__) || defined(__DJGPP__)
 	close(inf);
-#endif
+
 	if (!wizard)
-	{
-#ifndef __DJGPP__
-			endwin();
-			while((pid = fork()) < 0)
-				sleep(1);
-
-			/* set id to unlink file */
-			if(pid == 0)
-			{
-				setuid(playuid);
-				setgid(playgid);
-				unlink(file);
-				exit(0);
-			}
-			/* wait for unlink to finish */
-			else
-			{
-				while(wait(&ret_status) != pid)
-					continue;
-				if (ret_status < 0)
-				{
-					printf("Cannot unlink file\n");
-					return FALSE;
-				}
-			}
-#else
-		if (unlink(file) < 0)
-		{
-			printf("Cannot unlink file\n");
-			return FALSE;
-		}
-#endif
-
-	}
+		unlink(file);
 
 	environ = envp;
 
 	strcpy(file_name, file);
 	setup();
 	restscr(cw);
-	srand48(getpid());
+	md_srand(getpid());
 	playit();
+	return(0);
 }

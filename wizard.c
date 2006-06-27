@@ -14,10 +14,8 @@
  * See the file LICENSE.TXT for full copyright and licensing information.
  */
 
-#include <termios.h>
 #include <ctype.h>
 #include "rogue.h"
-#include <pwd.h>
 #include "rogue.ext"
 
 extern struct termios terminal;
@@ -292,11 +290,12 @@ int what;
  * telport:
  *	Bamf the thing someplace else
  */
+struct room *
 teleport(spot, th)
 struct coord spot;
 struct thing *th;
 {
-	reg int rm, y, x;
+	reg int y, x;
 	struct coord oldspot;
 	struct room *rp;
 	bool ishero;
@@ -315,9 +314,8 @@ struct thing *th;
 	}
 	else
 		th->t_pos = spot;
-	rm = rp - &rooms[0];
 	th->t_room = rp;
-	th->t_oldch = mvwinch(cw, th->t_pos.y, th->t_pos.x);
+	th->t_oldch = (char) mvwinch(cw, th->t_pos.y, th->t_pos.x);
 	light(&oldspot);
 	th->t_nomove = 0;
 	if (ishero) {
@@ -336,7 +334,7 @@ struct thing *th;
 	}
 	else
 		mvwaddch(mw, th->t_pos.y, th->t_pos.x, th->t_type);
-	return rm;
+	return rp;
 }
 
 /*
@@ -353,9 +351,9 @@ passwd()
 	mpos = 0;
 	sp = buf;
 	while ((c = getchar()) != '\n' && c != '\r' && c != ESCAPE)
-	if (c == terminal.c_cc[VKILL])
+	if (c == killchar())
 		sp = buf;
-	else if (c == terminal.c_cc[VERASE] && sp > buf)
+	else if (c == erasechar() && sp > buf)
 		sp--;
 	else
 		*sp++ = c;

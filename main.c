@@ -16,11 +16,9 @@
  */
 
 #include <time.h>
-#include <termios.h>
 #include <fcntl.h>
 #include <stdio.h>
 #include <signal.h>
-#include <pwd.h>
 #include <limits.h>
 #include <sys/stat.h>
 #include "rogue.h"
@@ -30,14 +28,10 @@
 #endif
 
 #ifdef BSD
-#define srand48(seed)	srandom(seed)
-#define lrand48()	random()
 #include <sys/time.h>
 #endif
 
 #include "rogue.ext"
-
-struct termios terminal;
 
 main(argc, argv, envp)
 char **argv;
@@ -46,14 +40,11 @@ char **envp;
 	register char *env;
 	register struct linked_list *item;
 	register struct object *obj;
-	struct passwd *pw;
-	struct passwd *getpwuid();
 	char alldone, wpt;
-	char *getpass(), *xcrypt(), *strrchr();
+	char *xcrypt();
 	int lowtime;
 	time_t now;
-        char *roguehome();
-	char *homedir = roguehome();
+	char *homedir = md_getroguedir();
 
 #ifdef __DJGPP__
 	_fmode = O_BINARY;
@@ -61,14 +52,6 @@ char **envp;
 
 	if (homedir == NULL)
         	homedir = "";
-
-	playuid = getuid();
-
-	if (setuid(playuid) < 0) {
-		printf("Cannot change to effective uid: %d\n", playuid);
-		exit(1);
-	}
-	playgid = getgid();
 
 	/* check for print-score option */
 
@@ -95,7 +78,7 @@ char **envp;
 
 	if (argc >= 2 && strcmp(argv[1],"-w") == 0)
 	{
-		if (strcmp(PASSWD, xcrypt(getpass(wizstr),"mT")) == 0)
+		if (strcmp(PASSWD, xcrypt(md_getpass(wizstr),"mT")) == 0)
 		{
 			wizard = TRUE;
 			argv++;
@@ -107,18 +90,7 @@ char **envp;
 
 	/* get home and options from environment */
 
-	if ((env = getenv("HOME")) != NULL)
-		strcpy(home, env);
-	else if ((pw = getpwuid(playuid)) != NULL)
-		strcpy(home, pw->pw_dir);
-	else
-		home[0] = '\0';
-
-        if (strcmp(home,"/") == 0)
-		home[0] = '\0';
-
-        if ((strlen(home) > 0) && (home[strlen(home)-1] != '/'))
-		strcat(home, "/");
+	strncpy(home, md_gethomedir(), LINLEN);
 
 	strcpy(file_name, home);
 	strcat(file_name, "srogue.sav");
@@ -126,16 +98,8 @@ char **envp;
 	if ((env = getenv("ROGUEOPTS")) != NULL)
 		parse_opts(env);
 
-	if (env == NULL || whoami[0] == '\0')
-	{
-		if((pw = getpwuid(playuid)) == NULL)
-		{
-			printf("Say, who are you?\n");
-			exit(1);
-		}
-		else
-			strucpy(whoami, pw->pw_name, strlen(pw->pw_name));
-	}
+	if (whoami[0] == '\0')
+        strucpy(whoami, md_getusername(), strlen(md_getusername()));
 
 	if (env == NULL || fruit[0] == '\0')
 		strcpy(fruit, "juicy-fruit");
@@ -154,10 +118,12 @@ char **envp;
 
 	fflush(stdout);
 	seed = dnum;
-	srand48(seed);			/* init rnd number gen */
+	md_srand(seed);			/* init rnd number gen */
 
 	signal(SIGINT, byebye);		/* just in case */
+#ifdef SIGQUIT
 	signal(SIGQUIT ,byebye);
+#endif
 
 	init_everything();
 
@@ -330,7 +296,7 @@ int range;
 	if (range == 0)
 		wh = 0;
 	else {
-		wh = lrand48() % range;
+		wh = md_rand() % range;
 		wh &= 0x7FFFFFFF;
 	}
 	return wh;
@@ -356,11 +322,17 @@ int number, sides;
 */
 setup()
 {
+#ifdef SIGHUP
 	signal(SIGHUP, auto_save);
+#endif
 	signal(SIGINT, auto_save);
+#ifdef SIGQUIT
 	signal(SIGQUIT,  byebye);
+#endif
 	signal(SIGILL, game_err);
+#ifdef SIGTRAP
 	signal(SIGTRAP, game_err);
+#endif
 #ifdef SIGIOT
 	signal(SIGIOT, game_err);
 #endif
@@ -375,7 +347,9 @@ setup()
 #ifdef SIGSYS
 	signal(SIGSYS, game_err);
 #endif
+#ifdef SIGPIPE
 	signal(SIGPIPE, game_err);
+#endif
 	signal(SIGTERM, game_err);
 
 	cbreak();
@@ -390,9 +364,6 @@ setup()
 playit()
 {
 	reg char *opts;
-
-	tcgetattr(0,&terminal);
-
 
 	/* parse environment declaration of options */
 
@@ -421,52 +392,3 @@ author()
 			return FALSE;
 	}
 }
-
-int
-directory_exists(char *dirname)
-{
-    struct stat sb;
-
-    if (stat(dirname, &sb) == 0) /* path exists */
-        return (S_ISDIR (sb.st_mode));
-
-    return(0);
-}
-
-char *
-roguehome()
-{
-    static char path[1024];
-    char *end,*home;
-
-    if ( (home = getenv("ROGUEHOME")) != NULL)
-    {
-        if (*home)
-        {
-            strncpy(path, home, PATH_MAX - 20);
-
-            end = &path[strlen(path)-1];
-
-
-            while( (end >= path) && ((*end == '/') || (*end == '\\')))
-                *end-- = '\0';
-
-            if (directory_exists(path))
-                return(path);
-        }
-    }
-
-    if (directory_exists("/var/games/roguelike"))
-        return("/var/games/roguelike");
-    if (directory_exists("/var/lib/roguelike"))
-        return("/var/lib/roguelike");
-    if (directory_exists("/var/roguelike"))
-        return("/var/roguelike");
-    if (directory_exists("/usr/games/lib"))
-        return("/usr/games/lib");
-    if (directory_exists("/games/roguelik"))
-        return("/games/roguelik");
-
-    return(NULL);
-}
-

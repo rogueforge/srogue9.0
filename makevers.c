@@ -17,7 +17,7 @@
 #include <stdio.h>
 #include <time.h>
 
-long clock;
+time_t clockv;
 struct tm *tp;
 char who[100];
 
@@ -41,8 +41,8 @@ char **argv;
 		fprintf(stderr,"%s: VERSION must be length 3\n", who);
 		exit(1);
 	}
-	time(&clock);
-	tp = localtime(&clock);
+	time(&clockv);
+	tp = localtime(&clockv);
 	sprintf(ts,"%2d/%2d/%2d",tp->tm_mon + 1,tp->tm_mday,tp->tm_year);
 	for (i = 2; i < argc; i++) {
 		ptr = strrchr(argv[i], '.');

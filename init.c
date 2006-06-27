@@ -130,7 +130,6 @@ init_things()
 init_colors()
 {
 	reg int i, j;
-	reg char *str;
 	bool used[NCOLORS];
 
 	for (i = 0; i < NCOLORS; i++)
@@ -191,7 +190,6 @@ init_names()
 init_stones()
 {
 	reg int i, j;
-	reg char *str;
 	bool used[NSTONES];
 
 	for (i = 0; i < NSTONES; i++)

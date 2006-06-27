@@ -133,7 +133,7 @@ bool wakeup;
 						mvaddch(y, x, FLOOR);
 					else {
 						tp = THINGPTR(it);
-						if (isatrap(tp->t_oldch = mvinch(y, x))) {
+						if (isatrap(tp->t_oldch = (char) mvinch(y, x))) {
 							struct trap *trp;
 
 							if ((trp = trap_at(y,x)) == NULL)

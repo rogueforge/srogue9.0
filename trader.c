@@ -284,7 +284,6 @@ trans_line()
  */
 do_maze()
 {
-	struct coord tp;
 	reg int i, least;
 	reg struct room *rp;
 	bool treas;
@@ -469,7 +468,7 @@ int newy, newx, oldy, oldx;
  */
 crankout()
 {
-	reg int x, y, i;
+	reg int x, y;
 
 	for (y = 0; y < LINES - 3; y++) {
 		move(y + 1, 0);

@@ -24,7 +24,6 @@
 new_level(ltype)
 int ltype;
 {
-	register i;
 	register char ch;
 	struct coord traploc;
 	struct room *rp;
@@ -134,7 +133,7 @@ again:
 	} while(levtype==MAZELEV&&DISTANCE(hero.y,hero.x,stairs.y,stairs.x)<10);
 
 	player.t_room = rp;
-	player.t_oldch = mvinch(hero.y, hero.x);
+	player.t_oldch = (char) mvinch(hero.y, hero.x);
 	light(&hero);
 	mvwaddch(cw,hero.y,hero.x,PLAYER);
 	nochange = FALSE;
