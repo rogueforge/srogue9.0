@@ -1,0 +1,129 @@
+#
+# Makefile for building Super-Rogue 9.0 with gcc or clang on Linux
+#
+# CFLAGS may be replaced, with a distribution's own flags for one.
+# REQUIRED comes after it, so that nothing in CFLAGS undoes it, and
+# lets the compiler build the 1984 source as it stands:
+#
+#   -std=gnu89
+#	The source is C from before the 1989 standard: old-style
+#	function definitions, functions called without being declared
+#	and types left to default to int.  Later standards do not
+#	allow these.
+#   -w
+#	Silence the warnings that style draws.
+#   -DATT
+#	The source builds for BSD, with a copy of the insides of BSD
+#	curses in cx.h, or for AT&T's System V, with the system's own
+#	curses.  The System V version asks curses for what it needs
+#	rather than reaching into it, and so it is the one that suits
+#	ncurses.
+#   -fno-common
+#	Keep each file's variables together in that file's own data.
+#	Older compilers otherwise leave the ones with no initial
+#	value for the linker to place, apart from the rest, and a
+#	saved game takes the game's data to lie between its first
+#	file and its last.
+#   -fsigned-char
+#	The source keeps the characters of the map and of the keys
+#	typed in a char, and takes it that a char can be negative, as
+#	it could on the machines of 1984.  On ARM and several other
+#	machines it cannot unless the compiler is told.
+#   -fwrapv
+#	The source takes it that signed arithmetic wraps around when
+#	it overflows, as it did on the machines of 1984.  gcc
+#	otherwise assumes that it never overflows.
+#   -fno-strict-aliasing
+#	At -O2 gcc assumes that pointers to different types never
+#	point at the same storage.  The source was written before
+#	that rule.
+#   -fno-lto
+#	Restoring a saved game reads it back over the game's
+#	variables.  Compiling a file at a time gcc cannot tell, but
+#	optimizing the whole program at once it can go on using
+#	values that the restore has replaced.  It is left out when
+#	linking, where NetBSD's gcc hands it on to the linker.
+#
+# gcc and clang do not take all the same flags, and not every version
+# of either takes them all, so each of these is used only if $(CC)
+# accepts it:
+#
+#   -Wno-error=return-type
+#	Functions with no declared type return without a value,
+#	which clang makes an error.
+#   -Wno-error=incompatible-function-pointer-types
+#	Signal handlers are functions with no declared type, which
+#	makes them int and not void.  clang makes that an error too.
+#   -Wno-error=int-conversion
+#	Strings are ended by storing NULL in a char, which clang and
+#	gcc from version 14 make an error.
+#
+# SCOREFILE says where the scores are kept.  It is
+# ~/.local/srogue9.0/scorefile unless it is given on the make line,
+# and make writes $(HOME) out when it builds, as open() does not
+# know ~.  Set it empty to go by main.c's place for it.  No scores
+# are kept if the file is not there; 'make -f Makefile.linux install'
+# makes it, empty.
+#
+# crypt(), which checks the wizard's password, is in libcrypt.
+#
+# A saved game is an image of the game's data and can only be
+# restored by the same build of srogue that saved it.
+#
+CC=	gcc
+CFLAGS=	-O2 -g
+SCOREFILE= $(HOME)/.local/srogue9.0/scorefile
+SF=	$(if $(SCOREFILE),-DSCOREFILE='"$(SCOREFILE)"')
+REQUIRED= -std=gnu89 -w -DATT -fno-common -fsigned-char -fwrapv \
+	-fno-strict-aliasing \
+	-fno-lto $(ACCEPTED) $(SF) $(DEFS)
+accepts= $(shell $(CC) -Werror $(1) -E -x c /dev/null >/dev/null 2>&1 \
+	&& echo $(1))
+ACCEPTED:= $(call accepts,-Wno-error=return-type) \
+	$(call accepts,-Wno-error=incompatible-function-pointer-types) \
+	$(call accepts,-Wno-error=int-conversion)
+CRLIB=	-lcurses
+CRYPTLIB= -lcrypt
+HDRS=	rogue.h rogue.ext
+OBJS=	vers.o armor.o chase.o command.o daemon.o daemons.o disply.o \
+	encumb.o fight.o global.o init.o io.o list.o main.o misc.o \
+	monsters.o move.o new_leve.o options.o pack.o passages.o potions.o \
+	pstats.o rings.o rip.o rooms.o save.o scrolls.o sticks.o things.o \
+	trader.o weapons.o wizard.o alloc.o
+
+srogue: $(OBJS)
+	$(CC) $(CFLAGS) $(filter-out -fno-lto,$(REQUIRED)) $(LDFLAGS) -o srogue $(OBJS) $(CRLIB) $(CRYPTLIB)
+
+.c.o:
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(REQUIRED) -c $<
+
+$(OBJS): $(HDRS)
+
+#
+# 'make -f Makefile.linux check' builds check/srogue with the address
+# sanitizer.  That srogue stops with a report on any read or write
+# outside an array and on any use of freed memory.  gcc defines
+# __SANITIZE_ADDRESS__ when the sanitizer is on, and save.c and
+# alloc.c go by it; clang may not, so it is defined here.
+#
+.PHONY: check
+check:
+	mkdir -p check
+	cd check && ln -sf ../*.c ../*.h ../rogue.ext ../Makefile.linux . && \
+	$(MAKE) -f Makefile.linux srogue \
+	    DEFS="-D__SANITIZE_ADDRESS__=1 -fsanitize=address \
+	    -fno-omit-frame-pointer"
+
+#
+# 'make -f Makefile.linux install' makes the directory the score file
+# goes in, and the score file itself, empty, if it is not there yet.
+#
+.PHONY: install
+install:
+	@test -n "$(SCOREFILE)" || { echo "SCOREFILE is not set"; exit 1; }
+	mkdir -p "$(dir $(SCOREFILE))"
+	test -f "$(SCOREFILE)" || : > "$(SCOREFILE)"
+
+clean:
+	rm -f $(OBJS) srogue
+	rm -rf check
