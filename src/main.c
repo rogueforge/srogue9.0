@@ -260,9 +260,7 @@ char *s;
 byebye(how)
 int how;
 {
-	EXTBOOL _endwin;
-
-	if (!_endwin)
+	if (!isendwin())
 		endwin();
 
 	exit(how);		/* exit like flag says */
