@@ -23,7 +23,9 @@
 
 #include "rogue.ext"
 
+#ifndef SCOREFILE
 #define SCOREFILE "/usr/games/rogue_score"
+#endif
 
 main(argc, argv, envp)
 char **argv;
