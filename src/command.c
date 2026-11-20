@@ -162,8 +162,8 @@ command()
 						after = FALSE;
 				when 'v': msg("Super Rogue version %s.",release);
 				when 'D': dip_it();
-				when CTRL(L) : after = FALSE; restscr(cw);
-				when CTRL(R) : after = FALSE; msg(huh);
+				when CTRL('L') : after = FALSE; restscr(cw);
+				when CTRL('R') : after = FALSE; msg(huh);
 				when 'a': after = FALSE; dispmax();
 				when '@' : if (author())
 					msg("Hero @ %d,%d : Stairs @ %d,%d",hero.y,hero.x,stairs.y,stairs.x);
@@ -182,7 +182,7 @@ command()
 						activity();
 						after = FALSE;
 					}
-				when CTRL(P) :
+				when CTRL('P') :
 					after = FALSE;
 					if (wizard) {
 						wizard = FALSE;
@@ -216,17 +216,17 @@ command()
 				otherwise :
 					after = FALSE;
 					if (wizard) switch (ch) {
-					case CTRL(A) : ;
+					case CTRL('A') : ;
 					when 'C'     :	create_obj(FALSE);
-					when CTRL(I) :	inventory(lvl_obj, 1);
-					when CTRL(W) :	whatis(NULL);
-					when CTRL(D) :	level++; new_level(NORMLEV);
-					when CTRL(U) :	level--; new_level(NORMLEV);
-					when CTRL(F) :	displevl();
-					when CTRL(X) :	dispmons();
-					when CTRL(T) :	teleport(rndspot,&player);
-					when CTRL(E) :	msg("food left: %d", food_left);
-					when CTRL(O) :	add_pass();
+					when CTRL('I') :	inventory(lvl_obj, 1);
+					when CTRL('W') :	whatis(NULL);
+					when CTRL('D') :	level++; new_level(NORMLEV);
+					when CTRL('U') :	level--; new_level(NORMLEV);
+					when CTRL('F') :	displevl();
+					when CTRL('X') :	dispmons();
+					when CTRL('T') :	teleport(rndspot,&player);
+					when CTRL('E') :	msg("food left: %d", food_left);
+					when CTRL('O') :	add_pass();
 					when 'M' : {
 						int tlev, whichlev;
 						prbuf[0] = NULL;
@@ -248,7 +248,7 @@ command()
 							new_level(whichlev);
 						}
 					}
-					when CTRL(N) : {
+					when CTRL('N') : {
 						struct linked_list *item;
 
 						item = get_item("charge", STICK);
@@ -257,7 +257,7 @@ command()
 							msg("");
 						}
 					}
-					when CTRL(H) : {
+					when CTRL('H') : {
 						int i;
 						struct linked_list *item;
 						struct object *obj;

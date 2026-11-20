@@ -206,7 +206,7 @@ struct h_list helpstr[] = {
 	'O',	"	examine/set options",
 	'a',	"	display maximum stats",
 	'D',	"	dip object in pool",
-	CTRL(L),"	redraw screen",
+	CTRL('L'),"	redraw screen",
 	ESCAPE,	"	cancel command",
 	'!',	"	shell escape",
 	'S',	"	save game",

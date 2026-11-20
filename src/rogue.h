@@ -147,7 +147,8 @@
 #define on(thing, flag) (((thing).t_flags & flag) != 0)
 #define off(thing, flag) (((thing).t_flags & flag) == 0)
 
-#define CTRL(ch) ('ch' & 0x1F)
+#undef CTRL
+#define CTRL(ch) (ch & 0x1F)
 
 #define ALLOC(x) malloc((unsigned int) x)
 #define FREE(x) free((char *) x)
