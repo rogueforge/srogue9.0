@@ -13,6 +13,10 @@
 #include <stdarg.h>
 #include <curses.h>
 
+#ifndef reg
+#define reg register
+#endif
+
 #ifdef ATT
 #define	CBREAK	FALSE
 #define _IOSTRG	01
