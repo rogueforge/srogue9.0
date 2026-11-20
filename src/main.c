@@ -322,6 +322,10 @@ setup()
 	signal(SIGSYS, game_err);
 	signal(SIGPIPE, game_err);
 	signal(SIGTERM, game_err);
+	sprintf(prbuf, "%d", LINES);
+	setenv("LINES", prbuf, 1);
+	sprintf(prbuf, "%d", COLS);
+	setenv("COLUMNS", prbuf, 1);
 
 	cbreak();
 	noecho();
