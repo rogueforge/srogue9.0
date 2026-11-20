@@ -643,6 +643,8 @@ struct object {
 extern WINDOW *cw, *hw, *mw;
 
 #define LINLEN	80			/* length of buffers */
+#define MAXLINES	128		/* most screen lines a saved game holds */
+#define MAXCOLS		256		/* most screen columns a saved game holds */
 
 #define EXTLKL	extern struct linked_list
 #define EXTTHG	extern struct thing
@@ -669,3 +671,7 @@ int msg(char *fmt, ...), addmsg(char *fmt, ...);
 #define flushout()	flushinp()
 
 #endif
+
+#define malloc	rg_alloc
+#define calloc	rg_calloc
+#define free	rg_free
