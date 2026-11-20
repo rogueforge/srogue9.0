@@ -58,7 +58,7 @@ option()
 			if (wh == QUIT)
 				break;
 			else if (op > optlist) {
-				wmove(hw, op - optlist);
+				wmove(hw, op - optlist, 16);
 				op -= 2;
 			}
 			else {
