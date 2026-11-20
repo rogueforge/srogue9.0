@@ -121,7 +121,7 @@ int amount, aflag;
 			packend = "at your untimely demise";
 		mvaddstr(LINES - 1, 0, retstr);
 		refresh();
-		gets(prbuf);
+		getnstr(prbuf, LINLEN - 1);
 		oldpurse = purse;
 		showpack(FALSE, packend);
 	}
@@ -143,7 +143,7 @@ int amount, aflag;
 	}
 	mvaddstr(LINES - 1, 0, retstr);
 	refresh();
-	gets(prbuf);
+	getnstr(prbuf, LINLEN - 1);
 	if (author() || wizard)
 		if (strcmp(prbuf, "names") == 0)
 			prflags = 1;
