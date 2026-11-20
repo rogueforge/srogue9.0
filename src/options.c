@@ -110,7 +110,7 @@ WINDOW *awin;
 		}
 		if (c == -1)
 			continue;
-		else if(c == _tty.sg_erase)	{	/* process erase char */
+		else if(c == erasechar())	{	/* process erase char */
 			if (sp > buf) {
 				reg int i;
 	
@@ -120,7 +120,7 @@ WINDOW *awin;
 			}
 			continue;
 		}
-		else if (c == _tty.sg_kill) {   /* process kill character */
+		else if (c == killchar()) {   /* process kill character */
 			sp = buf;
 			wmove(awin, oy, ox);
 			continue;

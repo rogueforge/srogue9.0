@@ -35,4 +35,3 @@ extern struct magic_info thnginfo[];
 extern struct real re_stats;
 extern long e_levels[];
 extern struct rod ws_stuff[];
-extern struct sgttyb _tty;

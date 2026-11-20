@@ -666,16 +666,6 @@ int msg(char *fmt, ...), addmsg(char *fmt, ...);
 #endif
 
 #ifdef ATT
-
-struct sgttyb {
-	char	sg_ispeed;		/* input speed */
-	char	sg_ospeed;		/* output speed */
-	char	sg_erase;		/* erase character */
-	char	sg_kill;		/* kill character */
-	int	sg_flags;		/* mode flags */
-};
-
-struct sgttyb _tty;
-#define flushout()	ioctl(2, TCFLSH, 0)
+#define flushout()	flushinp()
 
 #endif

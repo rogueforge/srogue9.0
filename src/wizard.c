@@ -10,8 +10,6 @@
 #include <pwd.h>
 #include "rogue.ext"
 
-extern struct sgttyb _tty;
-
 /*
  * whatis:
  *	What a certain object is
@@ -343,9 +341,9 @@ passwd()
 	mpos = 0;
 	sp = buf;
 	while ((c = getchar()) != '\n' && c != '\r' && c != ESCAPE)
-	if (c == _tty.sg_kill)
+	if (c == killchar())
 		sp = buf;
-	else if (c == _tty.sg_erase && sp > buf)
+	else if (c == erasechar() && sp > buf)
 		sp--;
 	else
 		*sp++ = c;
