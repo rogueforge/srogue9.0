@@ -223,7 +223,7 @@ rnd_pos(rp)
 struct room *rp;
 {
 	reg int y, x, i;
-	struct coord spot;
+	static struct coord spot;
 
 	i = 0;
 	do {
