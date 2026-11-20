@@ -110,7 +110,7 @@ ring_on()
 		}
 	}
 	if (r_know[wh] && r_guess[wh]) {
-		cfree(r_guess[wh]);
+		free(r_guess[wh]);
 		r_guess[wh] = NULL;
 	}
 	else if(!r_know[wh] && r_guess[wh] == NULL) {

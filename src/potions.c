@@ -300,7 +300,7 @@ quaff()
 	}
 	nochange = FALSE;
 	if (p_know[wh] && p_guess[wh]) {
-		cfree(p_guess[wh]);
+		free(p_guess[wh]);
 		p_guess[wh] = NULL;
 	}
 	else if(!p_know[wh] && p_guess[wh] == NULL) {

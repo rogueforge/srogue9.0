@@ -439,7 +439,7 @@ read_scroll()
 	look(TRUE);
 	nochange = FALSE;
 	if (s_know[wh] && s_guess[wh]) {
-		cfree(s_guess[wh]);
+		free(s_guess[wh]);
 		s_guess[wh] = NULL;
 	}
 	else if (!s_know[wh] && s_guess[wh] == NULL) {

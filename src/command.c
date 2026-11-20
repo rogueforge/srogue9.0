@@ -675,7 +675,7 @@ call()
 	msg("Was called \"%s\"", elsewise);
 	msg(callit);
 	if (guess[wh] != NULL)
-		cfree(guess[wh]);
+		free(guess[wh]);
 	strcpy(prbuf, elsewise);
 	if (get_str(prbuf, cw) == NORM) {
 		guess[wh] = new(strlen(prbuf) + 1);

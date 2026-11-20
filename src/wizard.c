@@ -36,25 +36,25 @@ struct linked_list *what;
 		case SCROLL:
 			s_know[wh] = TRUE;
 			if (s_guess[wh]) {
-				cfree(s_guess[wh]);
+				free(s_guess[wh]);
 				s_guess[wh] = NULL;
 			}
 	    when POTION:
 			p_know[wh] = TRUE;
 			if (p_guess[wh]) {
-				cfree(p_guess[wh]);
+				free(p_guess[wh]);
 				p_guess[wh] = NULL;
 			}
 		when STICK:
 			ws_know[wh] = TRUE;
 			if (ws_guess[wh]) {
-				cfree(ws_guess[wh]);
+				free(ws_guess[wh]);
 			ws_guess[wh] = NULL;
 			}
 	    when RING:
 			r_know[wh] = TRUE;
 			if (r_guess[wh]) {
-				cfree(r_guess[wh]);
+				free(r_guess[wh]);
 				r_guess[wh] = NULL;
 			}
 	}
