@@ -10,6 +10,7 @@
 #endif
 
 #include <ctype.h>
+#include <stdarg.h>
 #include <curses.h>
 
 #ifdef ATT
@@ -653,6 +654,8 @@ extern WINDOW *cw, *hw, *mw;
 #define EXTINT	extern int
 #define EXTBOOL	extern bool
 #define EXTCHAR	extern char
+
+int msg(char *fmt, ...), addmsg(char *fmt, ...);
 
 #ifdef BSD
 #define flushout()	ioctl(_tty_ch, TIOCFLUSH, 0)
