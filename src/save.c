@@ -199,7 +199,7 @@ char *file, **envp;
 	 */
 	if (!wizard)
 	{
-		if(sbuf2.st_ino!=sbuf.st_ino || sbuf2.st_dev!=sbuf.st_dev) {
+		if(sbuf2.st_ino!=sbuf.st_ino) {
 			printf("Sorry, saved game is not in the same file.\n");
 			return FALSE;
 		}
