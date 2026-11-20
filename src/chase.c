@@ -187,7 +187,7 @@ struct linked_list *mon;
 		ch = be_trapped(&ch_ret, th);
 		if (ch == GONER || nlmove) {
 			if (ch == GONER)
-				remove(&th->t_pos, mon);
+				remove_mon(&th->t_pos, mon);
 			nlmove = FALSE;
 			return;
 		}

@@ -309,7 +309,7 @@ tryagain:
 		mp = THINGPTR(ip);
 		nip = next(ip);
 		if (mp->t_type == c)
-			remove(&mp->t_pos, ip);
+			remove_mon(&mp->t_pos, ip);
 	}
 	mm->m_lev.l_lev = -1;				/* get rid of it */
 	mm->m_lev.h_lev = -1;

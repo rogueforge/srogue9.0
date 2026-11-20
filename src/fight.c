@@ -205,7 +205,7 @@ struct thing *mp;
 						msg("Your purse feels lighter.");
 					lep = find_mons(mp->t_pos.y,mp->t_pos.x);
 					if (lep != NULL)
-						remove(&mp->t_pos, lep);
+						remove_mon(&mp->t_pos, lep);
 				}
 				when 'N': {
 					struct linked_list *steal, *list;
@@ -232,7 +232,7 @@ struct thing *mp;
 
 							nym = find_mons(mp->t_pos.y, mp->t_pos.x);
 							if (nym != NULL)
-								remove(&mp->t_pos, nym);
+								remove_mon(&mp->t_pos, nym);
 							msg("She stole %s!", inv_name(sobj, TRUE));
 							detach(pack, steal);
 							discard(steal);
@@ -589,10 +589,10 @@ char *mname;
 
 
 /*
- * remove:
+ * remove_mon:
  *	Remove a monster from the screen
  */
-remove(mp, item)
+remove_mon(mp, item)
 struct coord *mp;
 struct linked_list *item;
 {
@@ -679,7 +679,7 @@ bool pr;
 	}
 	pitem = tp->t_pack;
 	itspack = tp->t_pack;
-	remove(&here, item);
+	remove_mon(&here, item);
 	while (pitem != NULL) {
 		nexti = next(pitem);
 		obj = OBJPTR(pitem);
