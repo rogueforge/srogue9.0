@@ -313,7 +313,9 @@ setup()
 	signal(SIGILL, game_err);
 	signal(SIGTRAP, game_err);
 	signal(SIGIOT, game_err);
+#ifdef SIGEMT
 	signal(SIGEMT, game_err);
+#endif
 	signal(SIGFPE, game_err);
 	signal(SIGBUS, game_err);
 	signal(SIGSEGV, game_err);
