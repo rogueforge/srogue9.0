@@ -98,6 +98,8 @@ struct coord rndspot = { -1, -1 };	/* for random teleporting */
 
 struct monster *mtlev[MONRANGE];
 
+char fung_dmg[] = "000d0";		/* damage of violet fungi */
+
 #define _r {10,10,10,10}	/* real ability (unused) */
 #define _p 0,0,0,0			/* hit points, pack, carry (unused) */
 #define _c 10				/* constitution (unused) */
@@ -111,7 +113,7 @@ struct monster monsters[MAXMONS + 1] = {
 {"centaur",'C',15,{8,17,1},0,{_r,{16,10,15,_c},15,4,4,_p,"1d6/1d6"}},
 {"red dragon",'D',100,{21,500,0},ISGREED,{_r,{17,10,17,_c},9000,11,-1,_p,"1d8/1d8/3d10"}},
 {"floating eye",'E',0,{2,11,0},0,{_r,{10,10,10,_c},5,1,9,_p,"0d0"}},
-{"violet fungi",'F',0,{15,24,0},ISMEAN|ISSTUCK,{_r,{10,5,3,_c},85,8,2,_p,"000d0"}},
+{"violet fungi",'F',0,{15,24,0},ISMEAN|ISSTUCK,{_r,{10,5,3,_c},85,8,2,_p,fung_dmg}},
 {"gnome",'G',10,{6,15,1},0,{_r,{10,10,11,_c},8,1,5,_p,"1d6"}},
 {"hobgoblin",'H',0,{1,8,1},ISMEAN,{_r,{10,10,10,_c},3,1,5,_p,"1d8"}},
 {"invisible stalker",'I',0,{16,25,1},ISINVIS|ISHUH,{_r,{10,15,15,_c},120,8,2,_p,"4d4"}},
