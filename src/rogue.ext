@@ -18,7 +18,7 @@ EXTINT chkstairs(), rollwand(), swander(), notslow(), notfight(), rnd();
 EXTINT rchg_str(), stomach(), doctor(), runners(), status(), game_err();
 EXTINT prntfile(), quit(), auto_save(), endit(), unconfuse(), sapem();
 EXTINT noteth(), notregen(), notinvinc(), unsee(), nohaste(), npch();
-EXTINT sight(), byebye(), scorefd;
+EXTINT sight(), byebye(), scorefd, nocmdcnt;
 EXTBOOL running, nochange, after, inwhgt, isfight, firstmove, nlmove;
 EXTBOOL wizard, waswizard, in_shell, amulet, door_stop, playing;
 EXTBOOL notify, ws_know[], p_know[], s_know[], r_know[], inpool;

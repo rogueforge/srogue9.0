@@ -29,6 +29,7 @@ int trader = 0;				/* no. of purchases */
 int curprice = -1;			/* current price of item */
 int purse = 0;				/* How much gold the rogue has */
 int mpos = 0;				/* Where cursor is on top line */
+int nocmdcnt = 0;			/* Turns in a row he could not move */
 int ntraps;					/* # of traps on this level */
 int packvol = 0;			/* volume of things in pack */
 int total = 0;				/* Total dynamic memory bytes */

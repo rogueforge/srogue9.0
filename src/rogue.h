@@ -214,6 +214,7 @@
  */
 #define	PASSWD		"yoC.nXvKF36pM"
 #define BEARTIME	3
+#define BORE_LEVEL	50		/* turns a floating eye may hold him */
 #define SLEEPTIME	5
 #define HEALTIME	30
 #define HOLDTIME	2

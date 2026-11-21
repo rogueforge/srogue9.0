@@ -44,6 +44,7 @@ command()
 			waswizard = TRUE;
 		if (player.t_nocmd <= 0) {
 			player.t_nocmd = 0;
+			nocmdcnt = 0;
 			if (running)
 				ch = runch;
 			else if (count)
@@ -57,6 +58,7 @@ command()
 		else
 			ch = '.';
 		if (player.t_nocmd > 0) {
+			nocmdcnt++;
 			if (--player.t_nocmd <= 0)
 				msg("You can move again.");	
 		}

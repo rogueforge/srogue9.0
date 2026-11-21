@@ -154,6 +154,8 @@ struct thing *mp;
 				 * The gaze of the floating eye hypnotizes you
 				 */
 					if (pl_off(ISBLIND) && player.t_nocmd <= 0) {
+						if (nocmdcnt > BORE_LEVEL)
+							death(mp->t_indx);
 						player.t_nocmd = rnd(16) + 25;
 						msg("You are transfixed.");
 					}
