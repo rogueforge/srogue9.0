@@ -20,18 +20,21 @@ struct coord ch_ret;	/* Where chasing takes you */
 runners()
 {
 	reg struct thing *tp;
-	reg struct linked_list *mon;
+	reg struct linked_list *mon, *nextmon;
 
-	for (mon = mlist; mon != NULL; mon = next(mon)) {
+	for (mon = mlist; mon != NULL; mon = nextmon) {
 		tp = THINGPTR(mon);
+		nextmon = next(mon);
 		if (off(*tp, ISHELD) && on(*tp, ISRUN)) {
 			if (tp->t_nomove > 0)
 				if (--tp->t_nomove > 0)
 					continue;
 			if (on(*tp, ISHASTE))
-				do_chase(mon);
+				if (do_chase(mon) == -1)
+					continue;
 			if (off(*tp, ISSLOW) || tp->t_turn)
-				do_chase(mon);
+				if (do_chase(mon) == -1)
+					continue;
 			tp->t_turn ^= TRUE;
 		}
 	}
@@ -71,7 +74,7 @@ struct linked_list *mon;
 			if (cansee(th->t_pos.y, th->t_pos.x))
 				msg("The vampire vaporizes into thin air !");
 			killed(mon, FALSE);
-			return;
+			return -1;
 		}
 	}
 	ree = roomin(th->t_dest);	/* room of chasee */
@@ -177,19 +180,17 @@ struct linked_list *mon;
 	 * so we run to it.  If we hit it we either want to
 	 * fight it or stop running.
 	 */
-	if (chase(th, &this, runaway, dofight) == FIGHT) {
-		attack(th);
-		return;
-	}
+	if (chase(th, &this, runaway, dofight) == FIGHT)
+		return attack(th);
 	else if ((th->t_flags & (ISSTUCK | ISPARA)))
-		return;				/* if paralyzed or stuck */
+		return 0;			/* if paralyzed or stuck */
 	if ((trp = trap_at(ch_ret.y, ch_ret.x)) != NULL) {
 		ch = be_trapped(&ch_ret, th);
 		if (ch == GONER || nlmove) {
 			if (ch == GONER)
 				remove_mon(&th->t_pos, mon);
 			nlmove = FALSE;
-			return;
+			return (ch == GONER ? -1 : 0);
 		}
 	}
 	if (pl_off(ISBLIND))

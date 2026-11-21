@@ -120,9 +120,9 @@ struct thing *mp;
 	reg char *mname;
 
 	if (pl_on(ISETHER))		/* ethereal players cant be hit */
-		return;
+		return 0;
 	if (mp->t_flags & ISPARA)	/* paralyzed monsters */
-		return;
+		return 0;
 	running = FALSE;
 	quiet = 0;
 	isfight = TRUE;
@@ -204,8 +204,10 @@ struct thing *mp;
 					if (purse != lastpurse)
 						msg("Your purse feels lighter.");
 					lep = find_mons(mp->t_pos.y,mp->t_pos.x);
-					if (lep != NULL)
+					if (lep != NULL) {
 						remove_mon(&mp->t_pos, lep);
+						mp = NULL;
+					}
 				}
 				when 'N': {
 					struct linked_list *steal, *list;
@@ -231,8 +233,10 @@ struct thing *mp;
 							struct linked_list *nym;
 
 							nym = find_mons(mp->t_pos.y, mp->t_pos.x);
-							if (nym != NULL)
+							if (nym != NULL) {
 								remove_mon(&mp->t_pos, nym);
+								mp = NULL;
+							}
 							msg("She stole %s!", inv_name(sobj, TRUE));
 							detach(pack, steal);
 							discard(steal);
@@ -322,6 +326,7 @@ struct thing *mp;
 	}
 	flushout();					/* flush type ahead */
 	count = 0;
+	return (mp == NULL ? -1 : 0);
 }
 
 
