@@ -20,6 +20,8 @@ int ltype;
 	struct coord traploc;
 	struct room *rp;
 
+	if (pl_on(ISHELD))		/* nothing holds him on the new level */
+		unhold('F');
 	if (level > max_level)
 		max_level = level;
 
