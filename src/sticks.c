@@ -109,6 +109,7 @@ bool gotdir;
 			chg_hpt(-roll(6,6), FALSE, K_ROD);
 			ws_know[WS_PYRO] = TRUE;
 			del_pack(item);		/* throw it away */
+			return;
 		}
 	when WS_HUNGER:
 		if (!bless) {
