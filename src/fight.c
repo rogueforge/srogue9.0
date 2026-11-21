@@ -465,7 +465,7 @@ char *cp, c;
 	reg int i;
 
 	for (i = 0; i < 3; i++)
-		if (*cp != c)  cp++;
+		if (*cp != c && *cp != '\0')  cp++;
 	if (*cp == c)
 		return cp;
 	else
