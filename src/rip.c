@@ -150,6 +150,8 @@ int amount, aflag;
 	if (author() || wizard)
 		if (strcmp(prbuf, "names") == 0)
 			prflags = 1;
+	if (!waswizard)
+		hold_sc();
 	read(fd, (char *) top_ten, sizeof(top_ten));
 	/*
 	 * Insert it in list if need be
@@ -176,8 +178,10 @@ int amount, aflag;
 		}
 	}
 	ignore();
-	lseek(fd, 0L, 0);
-	write(fd, (char *) top_ten, sizeof(top_ten));
+	if (!waswizard) {
+		lseek(fd, 0L, 0);
+		write(fd, (char *) top_ten, sizeof(top_ten));
+	}
 	signal(SIGINT, byebye);
 	signal(SIGQUIT, byebye);
 	clear();
@@ -187,6 +191,25 @@ int amount, aflag;
 	signal(SIGTSTP, SIG_DFL);
 #endif
 	showtop(prflags);		/* print top ten list */
+}
+
+/*
+ * hold_sc:
+ *	Lock the score file.  The lock goes when the file is closed.
+ *	Return TRUE if the file could be locked.
+ */
+hold_sc()
+{
+	reg int cnt;
+	static struct flock fl;
+
+	fl.l_type = F_WRLCK;
+	for (cnt = 0; fcntl(scorefd, F_SETLK, &fl) < 0; cnt++) {
+		if (cnt == 5)
+			return FALSE;
+		sleep(1);
+	}
+	return TRUE;
 }
 
 /*
