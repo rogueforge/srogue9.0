@@ -164,8 +164,8 @@ int fromfuse;
 	reg int totwght, carwght;
 	reg struct real *stef, *stre, *stmx;
 	reg char *pb;
-	int oy, ox, ch;
-	static char buf[LINLEN];
+	int oy, ox, ox2, ch;
+	static char buf[2 * LINLEN];
 	static char hwidth[] = { "%2d(%2d)" };
 
 	/*
@@ -210,7 +210,7 @@ int fromfuse;
 	sprintf(pb, "  Con: %2d(%c%2d)", stef->a_con, ch, stre->a_con);
 	pb = &buf[strlen(buf)];
 	sprintf(pb, "  Carry: %3d(%3d)", carwght, totwght);
-	mvwaddstr(cw, LINES - 1, 0, buf);
+	mvwaddnstr(cw, LINES - 1, 0, buf, COLS - 1);
 	sprintf(buf, "Level: %d  Gold: %5d  Hp: ",level, purse);
 	pb = &buf[strlen(buf)];
 	sprintf(pb, hwidth, him->s_hpt, him->s_maxhp);
@@ -220,8 +220,10 @@ int fromfuse;
 	carwght = (packvol * 100) / V_PACK;
 	pb = &buf[strlen(buf)];
 	sprintf(pb, "  Vol: %3d%%", carwght);
-	mvwaddstr(cw, LINES - 2, 0, buf);
-	waddstr(cw, hungstr[hungry_state]);
+	mvwaddnstr(cw, LINES - 2, 0, buf, COLS - 1);
+	ox2 = COLS - 1 - strlen(buf);
+	if (ox2 > 0)
+		waddnstr(cw, hungstr[hungry_state], ox2);
 	wclrtoeol(cw);
 	wmove(cw, oy, ox);
 }
