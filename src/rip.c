@@ -10,6 +10,7 @@
 #include <sys/types.h>
 #include <pwd.h>
 #include <fcntl.h>
+#include <sys/resource.h>
 #include "rogue.h"
 #include "rogue.ext"
 
@@ -111,6 +112,7 @@ int amount, aflag;
 	reg int i, fd, prflags = 0;
 	reg FILE *outf;
 	char *packend;
+	struct rlimit lim;
 
 	file_name[0] = NULL;
 	signal(SIGHUP, SIG_IGN);
@@ -178,7 +180,8 @@ int amount, aflag;
 		}
 	}
 	ignore();
-	if (!waswizard) {
+	if (!waswizard
+	  && !(getrlimit(RLIMIT_FSIZE, &lim) == 0 && lim.rlim_cur < sizeof top_ten)) {
 		lseek(fd, 0L, 0);
 		write(fd, (char *) top_ten, sizeof(top_ten));
 	}
