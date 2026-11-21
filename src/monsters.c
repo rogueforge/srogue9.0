@@ -200,7 +200,7 @@ wanderer()
 			mp = *rnd_pos(rp);
 			ch = mvinch(mp.y, mp.x);
 		}
-	} while (!step_ok(ch));
+	} while (!step_ok(ch) || find_mons(mp.y, mp.x) != NULL);
 	item = new_monster(rnd_mon(TRUE,FALSE), &mp, FALSE);
 	tp = THINGPTR(item);
 	tp->t_flags |= ISRUN;
