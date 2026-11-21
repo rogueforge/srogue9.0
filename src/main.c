@@ -370,7 +370,6 @@ playit()
 author()
 {
 	switch (playuid) {
-		case 100:
 		case 0:
 			return TRUE;
 		default:
