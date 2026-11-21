@@ -122,8 +122,6 @@ bool silent;
 	 * objects near each other, like all identify scrolls, etc.
 	 */
 	else {
-		struct linked_list **save;
-
 		while (ip != NULL && op->o_type == obj->o_type) {
 			if (op->o_group == obj->o_group) {
 				if (op->o_flags == obj->o_flags) {
@@ -161,11 +159,12 @@ around:
 		 * not at the end of the pack.
 		 */
 		else {
-			save = &((ip->l_prev)->l_next);
+			if ((item->l_prev = ip->l_prev) != NULL)
+				item->l_prev->l_next = item;
+			else
+				pack = item;
 			item->l_next = ip;
-			item->l_prev = ip->l_prev;
 			ip->l_prev = item;
-			*save = item;
 		}
 	}
 picked_up:
