@@ -9,6 +9,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <signal.h>
+#include <fcntl.h>
 #include "rogue.h"
 #include "rogue.ext"
 
@@ -169,6 +170,7 @@ game_err()
 dosave()
 {
 	FILE *savef;
+	int fd;
 
 	ignore();
 	setuid(playuid);
@@ -176,7 +178,10 @@ dosave()
 	umask(022);
 
 	if (save_ok() && file_name[0] != NULL) {
-		if ((savef = fopen(file_name,"w")) != NULL)
+		if (stat(file_name, &sbuf) >= 0 && (sbuf.st_mode & S_IFMT) == S_IFREG)
+			unlink(file_name);
+		if ((fd = open(file_name, O_WRONLY|O_CREAT|O_EXCL, 0400)) >= 0
+		  && (savef = fdopen(fd, "w")) != NULL)
 		{
 			save_file(savef);
 			return TRUE;
@@ -236,6 +241,10 @@ char *file, **envp;
 	}
 	if (sbuf2.st_uid != getuid()) {
 		printf("Sorry, saved game is not yours.\n");
+		return FALSE;
+	}
+	if ((sbuf2.st_mode & 022) != 0) {
+		printf("Sorry, saved game can be written by others.\n");
 		return FALSE;
 	}
 
