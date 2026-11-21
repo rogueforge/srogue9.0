@@ -176,20 +176,25 @@ char *str;
 		for (op = optlist; op < &optlist[NUM_OPTS]; op++) {
 			if (len > 0 && EQSTR(str, op->o_name, len)) {
 				reg char *start;
+				char value[LINLEN];
 	
-				for (str = *sp ? sp + 1 : sp; *str == '='; str++)
+				for (str = sp; *str == '='; str++)
 					continue;
 				if (*str == '~' && op->o_opt == file_name) {
-					strcpy(op->o_opt, home);
 					start = op->o_opt + strlen(home);
 					while (*++str == '/')
 						continue;
 				}
 				else
 					start = (char *) op->o_opt;
-				for (sp = *str ? str + 1 : str; *sp && *sp != ','; sp++)
+				for (sp = str; *sp && *sp != ','; sp++)
 					continue;
-				strucpy(start, str, sp - str);
+				strucpy(value, str, sp - str);
+				if (value[0] != '\0') {
+					if (start != (char *) op->o_opt)
+						strcpy(op->o_opt, home);
+					strcpy(start, value);
+				}
 			}
 		}
 		/*
