@@ -113,6 +113,7 @@ int amount, aflag;
 	char *packend;
 
 	file_name[0] = NULL;
+	signal(SIGHUP, SIG_IGN);
 	signal(SIGINT, byebye);
 	signal(SIGQUIT, byebye);
 	if (aflag != WINNER) {
