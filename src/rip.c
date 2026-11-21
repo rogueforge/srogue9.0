@@ -191,6 +191,7 @@ int amount, aflag;
 		lseek(fd, 0L, 0);
 		write(fd, (char *) top_ten, sizeof(top_ten));
 	}
+	rel_sc();
 	signal(SIGINT, byebye);
 	signal(SIGQUIT, byebye);
 	clear();
@@ -200,6 +201,18 @@ int amount, aflag;
 	signal(SIGTSTP, SIG_DFL);
 #endif
 	showtop(prflags);		/* print top ten list */
+}
+
+/*
+ * rel_sc:
+ *	Let go of the lock on the score file.
+ */
+rel_sc()
+{
+	static struct flock fl;
+
+	fl.l_type = F_UNLCK;
+	fcntl(scorefd, F_SETLK, &fl);
 }
 
 /*
@@ -213,6 +226,7 @@ hold_sc()
 	static struct flock fl;
 
 	fl.l_type = F_WRLCK;
+	fl.l_whence = SEEK_SET;
 	for (cnt = 0; fcntl(scorefd, F_SETLK, &fl) < 0; cnt++) {
 		if (cnt == 5)
 			return FALSE;
