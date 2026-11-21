@@ -100,7 +100,7 @@ save_game()
 	if (file_name[0] != NULL) {
 		msg("Save file (%s)? ", file_name);
 		do {
-			c = getchar();
+			c = readchar();
 			if(c == ESCAPE) {
 				msg("");
 				return FALSE;
