@@ -344,8 +344,11 @@ char *file, **envp;
 		}
 		else
 		{
-			while((pid = fork()) < 0)
-				sleep(1);
+			if ((pid = fork()) < 0) {
+				endwin();
+				printf("Cannot unlink file\n");
+				return FALSE;
+			}
 
 			/* set id to unlink file */
 			if(pid == 0)
