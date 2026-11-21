@@ -258,7 +258,6 @@ eat()
 		cursed += 1;
 	else if (o_on(obj, ISBLESS))
 		cursed -= 1;
-	del_pack(item);		/* get rid of the food */
 	if (obj->o_which == FRUITFOOD) {
 		msg("My, that was a yummy %s.", fruit);
 		goodfood = 100;
@@ -282,6 +281,7 @@ eat()
 	updpack();					/* update pack */
 	if (obj == cur_weapon)
 		cur_weapon = NULL;
+	del_pack(item);		/* get rid of the food */
 }
 
 /*
