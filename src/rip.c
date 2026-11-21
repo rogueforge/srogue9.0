@@ -232,7 +232,8 @@ int showname;
 	read(fd, (char *) top_ten, sizeof(top_ten));
 	printf("Top Ten Adventurers:\nRank\tScore\tName\n");
 	for (scp = top_ten; scp < &top_ten[10]; scp++) {
-		if (scp->sc_score > 0) {
+		if (scp->sc_score > 0
+		  && scp->sc_flags >= 0 && scp->sc_flags <= 2) {
 			printf("%d\t%d\t%s: %s\t\t--> %s on level %d",
 			  (int) (scp - top_ten) + 1, scp->sc_score, scp->sc_name,
 			  ctime(&scp->sc_date), reason[scp->sc_flags],
