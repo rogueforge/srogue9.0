@@ -154,7 +154,13 @@ int amount, aflag;
 			prflags = 1;
 	if (!waswizard)
 		hold_sc();
-	read(fd, (char *) top_ten, sizeof(top_ten));
+	i = read(fd, (char *) top_ten, sizeof(top_ten));
+	for (scp = sc2 = top_ten; scp < &top_ten[10]; scp++)
+		if ((char *) (scp + 1) - (char *) top_ten <= i && scp->sc_score != 0
+		  && scp->sc_flags >= 0 && scp->sc_flags <= 2)
+			*sc2++ = *scp;
+	while (sc2 < &top_ten[10])
+		sc2++->sc_score = 0;
 	/*
 	 * Insert it in list if need be
 	 */
