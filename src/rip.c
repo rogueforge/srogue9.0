@@ -301,6 +301,7 @@ addstr("                                                               \n");
 addstr("     Congratulations, you have made it to the light of day!    \n");
 addstr("\nYou have joined the elite ranks of those who have escaped the\n");
 addstr("Dungeons of Doom alive.  You journey home and sell all your loot at\n");
+addstr("a great profit and are admitted to the fighters guild.\n");
 
 
 	mvaddstr(LINES - 1, 0,spacemsg);
