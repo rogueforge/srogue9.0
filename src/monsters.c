@@ -295,7 +295,7 @@ tryagain:
 			msg("");
 			return;
 		}
-		if (isalpha(c))		/* valid char here */
+		if (isalpha((unsigned char) c))		/* valid char here */
 			i = FALSE;		/* exit the loop */
 		else {				/* he didn't type a letter */
 			mpos = 0;

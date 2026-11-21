@@ -170,7 +170,7 @@ char *str;
 	reg int len;
 
 	while (*str) {
-		for (sp = str; isalpha(*sp); sp++)	/* get option name */
+		for (sp = str; isalpha((unsigned char) *sp); sp++)	/* get option name */
 			continue;
 		len = sp - str;
 		for (op = optlist; op < &optlist[NUM_OPTS]; op++) {
@@ -200,7 +200,7 @@ char *str;
 		/*
 		 * skip to start of next option name
 		 */
-		while (*sp && !isalpha(*sp))
+		while (*sp && !isalpha((unsigned char) *sp))
 			sp++;
 		str = sp;
 	}

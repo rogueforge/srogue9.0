@@ -114,12 +114,12 @@ bool fscr;
 					nogood = FALSE;
 					break;
 				default:
-					if (isalpha(ch))
+					if (isalpha((unsigned char) ch))
 						nogood = FALSE;
 			}
 		} while (nogood);
 	}
-	if (isalpha(ch)) {
+	if (isalpha((unsigned char) ch)) {
 		if (inhw)
 			restscr(cw);
 		makemons(ch);		/* make monster & be done with it */
@@ -183,12 +183,12 @@ bool fscr;
 				msg("");
 				return;
 			}
-		} while (!isalpha(ch));
+		} while (!isalpha((unsigned char) ch));
 	}
 	if (inhw)			/* restore screen if need be */
 		restscr(cw);
 
-	newtype = tolower(ch) - 'a';
+	newtype = tolower((unsigned char) ch) - 'a';
 	if (newtype < 0 || newtype >= msz) {	/* if an illegal value */
 		mpos = 0;
 		after = FALSE;

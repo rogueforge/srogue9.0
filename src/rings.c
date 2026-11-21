@@ -231,8 +231,8 @@ bool isrmv;
 		addmsg("? ");
 		endmsg();
 		c = readchar();
-		if (isupper(c))
-			c = tolower(c);
+		if (isupper((unsigned char) c))
+			c = tolower((unsigned char) c);
 		if (c == '*' && isrmv) {
 			wclear(hw);
 			obj = cur_ring[LEFT];
@@ -250,8 +250,8 @@ bool isrmv;
 			wprintw(hw, "\n\r\nWhich hand? ");
 			draw(hw);
 			c = readchar();
-			if (isupper(c))
-				c = tolower(c);
+			if (isupper((unsigned char) c))
+				c = tolower((unsigned char) c);
 			restscr(cw);
 		}
 		if (c == 'l')

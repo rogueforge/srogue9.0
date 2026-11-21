@@ -109,8 +109,8 @@ buy_it()
 		msg("Do you want to buy it? ");
 		do {
 			wh = readchar();
-			if (isupper(wh))
-				wh = tolower(wh);
+			if (isupper((unsigned char) wh))
+				wh = tolower((unsigned char) wh);
 			if (wh == ESCAPE || wh == 'n') {
 				msg("");
 				return;
@@ -169,8 +169,8 @@ sell_it()
 	msg("Do you want to sell it? ");
 	do {
 		ch = readchar();
-		if (isupper(ch))
-			ch = tolower(ch);
+		if (isupper((unsigned char) ch))
+			ch = tolower((unsigned char) ch);
 		if (ch == ESCAPE || ch == 'n') {
 			msg("");
 			return;

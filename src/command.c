@@ -63,10 +63,10 @@ command()
 			/*
 			 * check for prefixes
 			 */
-			if (isdigit(ch)) {
+			if (isdigit((unsigned char) ch)) {
 				count = 0;
 				newcount = TRUE;
-				while (isdigit(ch)) {
+				while (isdigit((unsigned char) ch)) {
 					if (count < 1000)
 						count = count * 10 + (ch - '0');
 					ch = readchar();
@@ -103,7 +103,7 @@ command()
 				switch (ch) {
 					case 'h': case 'j': case 'k': case 'l':
 					case 'y': case 'u': case 'b': case 'n':
-						ch = toupper(ch);
+						ch = toupper((unsigned char) ch);
 				}
 				direction = ch;
 			}
@@ -506,7 +506,7 @@ int what;
 	}
 	else
 		ch = what;
-	if (isalpha(ch))
+	if (isalpha((unsigned char) ch))
 		str = monsters[midx(ch)].m_name;
 	else {
 		switch(ch) {

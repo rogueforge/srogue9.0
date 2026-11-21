@@ -326,13 +326,13 @@ int type;
 					after = FALSE;
 					return NULL;
 				}
-				if (isalpha(och) && och != pack_char(opb)) {
+				if (isalpha((unsigned char) och) && och != pack_char(opb)) {
 					mpos = 0;
 					msg("You can't %s that !!", purpose);
 					after = FALSE;
 					return NULL;
 				}
-			} while(!isalpha(och));
+			} while(!isalpha((unsigned char) och));
 			mpos = 0;
 			return savepit;		/* return this item */
 		}
@@ -367,7 +367,7 @@ int type;
 			anr = FALSE;
 			do {
 				ch = readchar();
-				if (isalpha(ch) || ch == ESCAPE)
+				if (isalpha((unsigned char) ch) || ch == ESCAPE)
 					anr = TRUE; 
 			} while(!anr);		/* do till we got it right */
 			restscr(cw);		/* redraw orig screen */

@@ -304,7 +304,7 @@ char *
 vowelstr(str)
 char *str;
 {
-	switch (tolower(*str)) {
+	switch (tolower((unsigned char) *str)) {
 		case 'a':
 		case 'e':
 		case 'i':

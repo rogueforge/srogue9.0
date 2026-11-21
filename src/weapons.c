@@ -34,8 +34,8 @@ int ydelta, xdelta;
 		msg("Do you want to throw that %s? (y or n)",obj->o_typname);
 		do {
 			c = readchar();
-			if (isupper(c))
-				c = tolower(c);
+			if (isupper((unsigned char) c))
+				c = tolower((unsigned char) c);
 			if (c == ESCAPE || c == 'n') {
 				msg("");
 				cur_weapon = nowwield;
