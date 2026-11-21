@@ -14,7 +14,7 @@
  */
 wear()
 {
-	reg struct linked_list *item;
+	reg struct linked_list *item, *ip;
 	reg struct object *obj;
 
 	if (cur_armor != NULL) {
@@ -30,6 +30,10 @@ wear()
 		return;
 	}
 	waste_time();
+	for (ip = pack; ip != NULL && ip != item; ip = next(ip))
+		continue;
+	if (ip == NULL)
+		return;
 	msg("Wearing %s.", a_magic[obj->o_which].mi_name);
 	cur_armor = obj;
 	setoflg(obj,ISKNOW);
