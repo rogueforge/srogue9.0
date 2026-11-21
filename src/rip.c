@@ -228,7 +228,7 @@ hold_sc()
 showtop(showname)
 int showname;
 {
-	reg int fd;
+	reg int fd, i;
 	char *killer;
 	struct sc_ent *scp;
 
@@ -240,6 +240,10 @@ int showname;
 	for (scp = top_ten; scp < &top_ten[10]; scp++) {
 		if (scp->sc_score > 0
 		  && scp->sc_flags >= 0 && scp->sc_flags <= 2) {
+			scp->sc_name[LINLEN - 1] = '\0';
+			for (i = 0; scp->sc_name[i] != '\0'; i++)
+				if (scp->sc_name[i] < ' ' || scp->sc_name[i] > '~')
+					scp->sc_name[i] = '?';
 			printf("%d\t%d\t%s: %s\t\t--> %s on level %d",
 			  (int) (scp - top_ten) + 1, scp->sc_score, scp->sc_name,
 			  ctime(&scp->sc_date), reason[scp->sc_flags],
