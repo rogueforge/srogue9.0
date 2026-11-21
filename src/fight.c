@@ -560,7 +560,8 @@ int which;
  */
 raise_level()
 {
-	him->s_exp = e_levels[him->s_lvl-1] + 1L;
+	if (e_levels[him->s_lvl-1] != 0)
+		him->s_exp = e_levels[him->s_lvl-1] + 1L;
 	check_level();
 }
 
