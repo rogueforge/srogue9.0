@@ -617,6 +617,7 @@ shell()
 	while((pid = fork()) < 0)
 		sleep(1);
 	if (pid == 0) {
+		close(scorefd);
 		setuid(playuid);	/* Set back to original user */
 		setgid(playgid);
 		execl(sh == NULL ? "/bin/sh" : sh, "shell", "-i", (char *) 0);
