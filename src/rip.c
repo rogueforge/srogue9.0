@@ -183,6 +183,9 @@ int amount, aflag;
 	clear();
 	refresh();
 	endwin();
+#ifdef SIGTSTP
+	signal(SIGTSTP, SIG_DFL);
+#endif
 	showtop(prflags);		/* print top ten list */
 }
 
