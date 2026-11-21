@@ -247,7 +247,7 @@ char *file, **envp;
 	STAT sbuf2;
 	int y, x, owiz, sfd;
 
-	if ((inf = open(file, 0)) < 0 || fstat(inf, &sbuf2) < 0) {
+	if ((inf = open(file, O_RDONLY|O_NONBLOCK)) < 0 || fstat(inf, &sbuf2) < 0) {
 		printf("Cannot read save game %s\n",file);
 		return FALSE;
 	}
