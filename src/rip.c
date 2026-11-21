@@ -68,7 +68,7 @@ char monst;
 	purse -= purse/10;
 	sprintf(buf, "%d Gold Pieces", purse);
 	mvaddstr(16, 36 - ((strlen(buf) + 1) / 2), buf);
-	sprintf(prbuf, "%d/%d/%d", lt->tm_mon + 1, lt->tm_mday, lt->tm_year);
+	sprintf(prbuf, "%d/%d/%d", lt->tm_mon + 1, lt->tm_mday, 1900 + lt->tm_year);
 	mvaddstr(18, 32, prbuf);
 	move(LINES-1, 0);
 	refresh();
