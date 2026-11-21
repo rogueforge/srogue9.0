@@ -230,8 +230,12 @@ char *file, **envp;
 	STAT sbuf2;
 	int y, x;
 
-	if ((inf = open(file, 0)) < 0) {
+	if ((inf = open(file, 0)) < 0 || fstat(inf, &sbuf2) < 0) {
 		printf("Cannot read save game %s\n",file);
+		return FALSE;
+	}
+	if (sbuf2.st_uid != getuid()) {
+		printf("Sorry, saved game is not yours.\n");
 		return FALSE;
 	}
 
@@ -243,7 +247,6 @@ char *file, **envp;
 		return FALSE;
 	}
 
-	fstat(inf, &sbuf2);
 	if (sbuf2.st_size != (rg_edata - version) + (rg_ebss - rg_bss)) {
 		printf("Sorry, saved game version is out of date.\n");
 		return FALSE;
