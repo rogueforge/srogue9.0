@@ -130,8 +130,9 @@ int amount, aflag;
 	/*
 	 * Open file and read list
 	 */
-	if ((fd = open(scorefile, O_RDWR)) < 0)
+	if ((fd = scorefd) < 0)
 		return;
+	lseek(fd, 0L, 0);
 	outf = fdopen(fd, "w");
 	for (scp = top_ten; scp < &top_ten[10]; scp++) {
 		scp->sc_score = 0;
@@ -177,7 +178,6 @@ int amount, aflag;
 	ignore();
 	lseek(fd, 0L, 0);
 	write(fd, (char *) top_ten, sizeof(top_ten));
-	close(fd);
 	signal(SIGINT, byebye);
 	signal(SIGQUIT, byebye);
 	clear();
@@ -200,10 +200,10 @@ int showname;
 	char *killer;
 	struct sc_ent *scp;
 
-	if ((fd = open(scorefile, O_RDONLY)) < 0)
+	if ((fd = scorefd) < 0)
 		return FALSE;
+	lseek(fd, 0L, 0);
 	read(fd, (char *) top_ten, sizeof(top_ten));
-	close(fd);
 	printf("Top Ten Adventurers:\nRank\tScore\tName\n");
 	for (scp = top_ten; scp < &top_ten[10]; scp++) {
 		if (scp->sc_score > 0) {

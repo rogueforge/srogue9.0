@@ -21,6 +21,7 @@ struct trap traps[MAXTRAPS];		/* traps on this level */
 
 int playuid;				/* uid of current player */
 int playgid;				/* gid of current player */
+int scorefd = -1;			/* score file, opened while set-id */
 int level = 1;				/* What level rogue is on */
 int levcount = 0;			/* # of active mons this level */
 int levtype = NORMLEV;		/* type of level this is, maze, etc. */

@@ -244,7 +244,7 @@ char *file, **envp;
 	extern char **environ;
 	char buf[LINLEN];
 	STAT sbuf2;
-	int y, x, owiz;
+	int y, x, owiz, sfd;
 
 	if ((inf = open(file, 0)) < 0 || fstat(inf, &sbuf2) < 0) {
 		printf("Cannot read save game %s\n",file);
@@ -273,6 +273,7 @@ char *file, **envp;
 	fflush(stdout);
 	lseek(inf, 0L, 0);
 	owiz = wizard;
+	sfd = scorefd;
 	if (read(inf, version, (unsigned int) (rg_edata - version))
 		!= rg_edata - version
 	  || read(inf, rg_bss, (unsigned int) (rg_ebss - rg_bss))
@@ -290,6 +291,7 @@ char *file, **envp;
 		printf("Sorry, saved game is damaged.\n");
 		return FALSE;
 	}
+	scorefd = sfd;
 	if ((wizard = owiz) != FALSE)
 		waswizard = TRUE;
 

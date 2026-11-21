@@ -42,16 +42,16 @@ char **envp;
 	long now;
 
 	playuid = getuid();
-
-	if (setuid(playuid) < 0) {
-		printf("Cannot change to effective uid: %d\n", playuid);
-		exit(1);
-	}
 	playgid = getgid();
 
-	/* check for print-score option */
-
+	/*
+	 * open the score file while the game still has the privileges
+	 * it was installed with, and then give them up for good
+	 */
 	strncpy(scorefile, SCOREFILE, MAXPATH - 1);
+	open_score();
+
+	/* check for print-score option */
 
 	if(argc >= 2 && strcmp(argv[1], "-s") == 0)
 	{
@@ -261,6 +261,20 @@ char *s;
 	fprintf(stderr,"%s\n\r",s);
 	fflush(stderr);
 	byebye(2);
+}
+
+/*
+ * open_score:
+ *	Open the score file, and give up set-id privileges for good
+ */
+open_score()
+{
+	scorefd = open(scorefile, 2);
+	if ((setregid(playgid, playgid) < 0 || setreuid(playuid, playuid) < 0)
+	  && (getegid() != playgid || geteuid() != playuid)) {
+		perror("srogue");
+		exit(1);
+	}
 }
 
 /*
