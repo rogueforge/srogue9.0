@@ -174,7 +174,7 @@ char *str;
 			continue;
 		len = sp - str;
 		for (op = optlist; op < &optlist[NUM_OPTS]; op++) {
-			if (EQSTR(str, op->o_name, len)) {
+			if (len > 0 && EQSTR(str, op->o_name, len)) {
 				reg char *start;
 	
 				for (str = *sp ? sp + 1 : sp; *str == '='; str++)
