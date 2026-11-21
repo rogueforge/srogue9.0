@@ -254,7 +254,7 @@ command()
 						struct linked_list *item;
 
 						item = get_item("charge", STICK);
-						if (item != NULL) {
+						if (item != NULL && (OBJPTR(item))->o_type == STICK) {
 							(OBJPTR(item))->o_charges = 10000;
 							msg("");
 						}
@@ -264,7 +264,10 @@ command()
 						struct linked_list *item;
 						struct object *obj;
 
-						him->s_exp = e_levels[him->s_lvl + 7] + 1;
+						i = him->s_lvl + 7;
+						if (i > 28)		/* the last level of all */
+							i = 28;
+						him->s_exp = e_levels[i] + 1;
 						check_level();
 						/*
 						 * Give the rogue a very good sword

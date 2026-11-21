@@ -72,7 +72,9 @@ char **envp;
 
 	if (argc >= 2 && strcmp(argv[1],"-w") == 0)
 	{
-		if (strcmp(PASSWD, crypt(getpass(wizstr),"yo")) == 0)
+		if ((env = getpass(wizstr)) != NULL
+		  && (env = crypt(env, "yo")) != NULL
+		  && strcmp(PASSWD, env) == 0)
 		{
 			wizard = TRUE;
 			argv++;

@@ -351,7 +351,7 @@ passwd()
 		passok = FALSE;
 	else {
 		*sp = NULL;
-		passok = (strcmp(PASSWD, crypt(buf, "yo")) == 0);
+		passok = ((sp = crypt(buf, "yo")) != NULL && strcmp(PASSWD, sp) == 0);
 	}
 	return passok;
 }
