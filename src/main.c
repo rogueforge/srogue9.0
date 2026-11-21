@@ -269,6 +269,12 @@ char *s;
  */
 open_score()
 {
+	reg int i;
+
+	while ((i = open("/dev/null", 2)) >= 0 && i < 3)
+		continue;
+	if (i >= 3)
+		close(i);
 	scorefd = open(scorefile, 2);
 	if ((setregid(playgid, playgid) < 0 || setreuid(playuid, playuid) < 0)
 	  && (getegid() != playgid || geteuid() != playuid)) {
