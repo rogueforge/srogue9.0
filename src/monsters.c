@@ -188,9 +188,12 @@ wanderer()
 	reg struct room *rp, *hr = player.t_room;
 	reg struct linked_list *item;
 	reg struct thing *tp;
+	reg int cnt = 0;
 	struct coord mp;
 
 	do {
+		if (cnt++ >= 500)
+			return;
 		rp = &rooms[rnd_room()];
 		if (rp != hr || levtype == MAZELEV) {
 			mp = *rnd_pos(rp);
