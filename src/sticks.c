@@ -245,7 +245,9 @@ bool gotdir;
 				if (wh == WS_TELAWAY) {
 					if (curse)
 						break;
-					tp->t_pos = *rnd_pos(&rooms[rnd_room()]);
+					do {
+						tp->t_pos = *rnd_pos(&rooms[rnd_room()]);
+					} while (ce(tp->t_pos, hero));
 				}
 				else {					/* WS_TELTO */
 					if (bless)
