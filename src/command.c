@@ -164,7 +164,7 @@ command()
 				when 'v': msg("Super Rogue version %s.",release);
 				when 'D': dip_it();
 				when CTRL('L') : after = FALSE; restscr(cw);
-				when CTRL('R') : after = FALSE; msg(huh);
+				when CTRL('R') : after = FALSE; msg("%s", huh);
 				when 'a': after = FALSE; dispmax();
 				when '@' : if (author())
 					msg("Hero @ %d,%d : Stairs @ %d,%d",hero.y,hero.x,stairs.y,stairs.x);
