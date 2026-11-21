@@ -233,7 +233,7 @@ char *file, **envp;
 	extern char **environ;
 	char buf[LINLEN];
 	STAT sbuf2;
-	int y, x;
+	int y, x, owiz;
 
 	if ((inf = open(file, 0)) < 0 || fstat(inf, &sbuf2) < 0) {
 		printf("Cannot read save game %s\n",file);
@@ -262,6 +262,7 @@ char *file, **envp;
 	}
 	fflush(stdout);
 	lseek(inf, 0L, 0);
+	owiz = wizard;
 	if (read(inf, version, (unsigned int) (rg_edata - version))
 		!= rg_edata - version
 	  || read(inf, rg_bss, (unsigned int) (rg_ebss - rg_bss))
@@ -279,12 +280,14 @@ char *file, **envp;
 		printf("Sorry, saved game is damaged.\n");
 		return FALSE;
 	}
+	if ((wizard = owiz) != FALSE)
+		waswizard = TRUE;
 
 	/*
 	 * we do not close the file so that we will have a hold of the
 	 * inode for as long as possible
 	 */
-	if (!wizard)
+	if (!owiz)
 	{
 		if(sbuf2.st_ino!=sbuf.st_ino) {
 			printf("Sorry, saved game is not in the same file.\n");
@@ -318,7 +321,7 @@ char *file, **envp;
 
 	/* defeat multiple restarting from the same place */
 
-	if (!wizard)
+	if (!owiz)
 	{
 		if (sbuf2.st_nlink != 1)
 		{
