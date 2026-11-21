@@ -188,7 +188,13 @@ dosave()
 		if (stat(file_name, &sbuf) >= 0 && (sbuf.st_mode & S_IFMT) == S_IFREG)
 			unlink(file_name);
 		if ((fd = open(file_name, O_WRONLY|O_CREAT|O_EXCL, 0400)) >= 0
-		  && (savef = fdopen(fd, "w")) != NULL)
+		  && fstat(fd, &sbuf) == 0
+		  && (sbuf.st_uid != getuid() || (sbuf.st_mode & 022) != 0)) {
+			close(fd);			/* restore() would refuse it */
+			unlink(file_name);
+			fd = -1;
+		}
+		if (fd >= 0 && (savef = fdopen(fd, "w")) != NULL)
 		{
 			if (save_file(savef))
 				return TRUE;
