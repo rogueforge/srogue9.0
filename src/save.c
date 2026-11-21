@@ -183,8 +183,9 @@ dosave()
 		if ((fd = open(file_name, O_WRONLY|O_CREAT|O_EXCL, 0400)) >= 0
 		  && (savef = fdopen(fd, "w")) != NULL)
 		{
-			save_file(savef);
-			return TRUE;
+			if (save_file(savef))
+				return TRUE;
+			unlink(file_name);
 		}
 	}
 	return FALSE;
@@ -197,7 +198,7 @@ dosave()
 save_file(savef)
 FILE *savef;
 {
-	reg int fnum;
+	reg int fnum, ok;
 
 	/*
 	 * force allocation of the buffer now so that inodes, etc
@@ -212,13 +213,19 @@ FILE *savef;
 	save_wins(FALSE);
 	save_stamp[0] = (long) playit - (long) version;
 	save_stamp[1] = (long) rg_restored - (long) __executable_start;
-	write(fnum, version, (unsigned int) (rg_edata - version));
-	write(fnum, rg_bss, (unsigned int) (rg_ebss - rg_bss));
-	close(fnum);
+	ok = write(fnum, version, (unsigned int) (rg_edata - version))
+		== rg_edata - version
+	  && write(fnum, rg_bss, (unsigned int) (rg_ebss - rg_bss))
+		== rg_ebss - rg_bss;
+	if (close(fnum) < 0)
+		ok = FALSE;
 	signal(SIGINT, byebye);
 	signal(SIGQUIT, byebye);
-	wclear(cw);
-	draw(cw);
+	if (ok) {
+		wclear(cw);
+		draw(cw);
+	}
+	return ok;
 }
 
 /*
