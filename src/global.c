@@ -49,7 +49,7 @@ char take;					/* Thing the rogue is taking */
 char runch;					/* Direction player is running */
 char curpurch[15];			/* name of item ready to buy */
 
-char prbuf[LINLEN];			/* Buffer for sprintfs */
+char prbuf[2 * LINLEN];		/* Buffer for sprintfs */
 char whoami[LINLEN];		/* Name of player */
 char fruit[LINLEN];			/* Favorite fruit */
 char huh[BUFSIZ];			/* The last message printed */
