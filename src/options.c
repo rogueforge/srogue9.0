@@ -202,16 +202,20 @@ char *str;
 }
 
 /*
- * copy string using unctrl for things
+ * copy string using unctrl for things, but no more of it than a
+ * string of LINLEN holds
  */
 strucpy(s1, s2, len)
 char *s1, *s2;
 int len;
 {
-	reg char *sp;
+	reg char *sp, *end = s1 + LINLEN - 1;
 
 	while (len-- > 0) {
-		strcpy(s1, (sp = unctrl(*s2++)));
+		sp = unctrl(*s2++);
+		if (s1 + strlen(sp) > end)
+			break;
+		strcpy(s1, sp);
 		s1 += strlen(sp);
 	}
 	*s1 = NULL;
