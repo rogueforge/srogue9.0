@@ -218,13 +218,14 @@ bool gotdir;
 			tp = THINGPTR(item);
 			omonst = tp->t_indx;
 			if (wh == WS_POLYM && !curse) {
+				oldch = tp->t_oldch;
 				detach(mlist, item);
 				discard(item);
-				oldch = tp->t_oldch;
 				delta.y = y;
 				delta.x = x;
 				monster = rnd_mon(FALSE, TRUE);
 				item = new_monster(monster, &delta, FALSE);
+				tp = THINGPTR(item);
 				if (!(tp->t_flags & ISRUN))
 					runto(&delta, &hero);
 				if (isalpha(mvwinch(cw, y, x)))
