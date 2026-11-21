@@ -177,7 +177,7 @@ char *str;
 			if (EQSTR(str, op->o_name, len)) {
 				reg char *start;
 	
-				for (str = sp + 1; *str == '='; str++)
+				for (str = *sp ? sp + 1 : sp; *str == '='; str++)
 					continue;
 				if (*str == '~' && op->o_opt == file_name) {
 					strcpy(op->o_opt, home);
@@ -187,7 +187,7 @@ char *str;
 				}
 				else
 					start = (char *) op->o_opt;
-				for (sp = str + 1; *sp && *sp != ','; sp++)
+				for (sp = *str ? str + 1 : str; *sp && *sp != ','; sp++)
 					continue;
 				strucpy(start, str, sp - str);
 			}
