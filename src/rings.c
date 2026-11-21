@@ -118,7 +118,8 @@ ring_on()
 		strcpy(buf, r_stones[wh]);
 		msg(callit);
 		if (get_str(buf, cw) == NORM) {
-			r_guess[wh] = new(strlen(buf) + 1);
+			r_guess[wh] = new(strlen(buf) < sizeof (struct thing) ?
+			  sizeof (struct thing) : strlen(buf) + 1);
 			strcpy(r_guess[wh], buf);
 		}
 	}

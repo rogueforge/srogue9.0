@@ -446,7 +446,8 @@ read_scroll()
 		strcpy(buf, s_names[wh]);
 		msg(callit);
 		if (get_str(buf, cw) == NORM) {
-			s_guess[wh] = new(strlen(buf) + 1);
+			s_guess[wh] = new(strlen(buf) < sizeof (struct thing) ?
+			  sizeof (struct thing) : strlen(buf) + 1);
 			strcpy(s_guess[wh], buf);
 		}
 	}

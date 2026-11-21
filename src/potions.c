@@ -307,7 +307,8 @@ quaff()
 		strcpy(buf, p_colors[wh]);
 		msg(callit);
 		if (get_str(buf, cw) == NORM) {
-			p_guess[wh] = new(strlen(buf) + 1);
+			p_guess[wh] = new(strlen(buf) < sizeof (struct thing) ?
+			  sizeof (struct thing) : strlen(buf) + 1);
 			strcpy(p_guess[wh], buf);
 		}
 	}

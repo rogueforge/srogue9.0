@@ -684,7 +684,8 @@ call()
 	if (get_str(prbuf, cw) == NORM) {
 		if (guess[wh] != NULL)
 			free(guess[wh]);
-		guess[wh] = new(strlen(prbuf) + 1);
+		guess[wh] = new(strlen(prbuf) < sizeof (struct thing) ?
+			  sizeof (struct thing) : strlen(prbuf) + 1);
 		strcpy(guess[wh], prbuf);
 	}
 }
