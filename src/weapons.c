@@ -69,6 +69,8 @@ int ydelta, xdelta;
 	if (!isalpha(mvwinch(mw, obj->o_pos.y, obj->o_pos.x))
 	  || !hit_monster(&obj->o_pos, obj))
 		fall(item, TRUE);
+	else
+		discard(item);
 	mvwaddch(cw, hero.y, hero.x, PLAYER);
 }
 
