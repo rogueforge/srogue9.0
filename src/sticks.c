@@ -258,6 +258,7 @@ bool gotdir;
 				if (isalpha(mvwinch(cw, y, x))
 				  || mvwinch(cw, y, x) == tp->t_disguise)
 					mvwaddch(cw, y, x, tp->t_oldch);
+				tp->t_room = roomin(&tp->t_pos);
 				tp->t_dest = &hero;
 				tp->t_flags |= ISRUN;
 				mvwaddch(mw, y, x, ' ');
