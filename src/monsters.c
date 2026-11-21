@@ -25,6 +25,12 @@ bool baddie;		/* TRUE when from a polymorph stick */
 		return(MAXMONS);
 	if (baddie) {
 		while (1) {
+			if (cnt++ == 100) {
+				for (i = 0; i < MAXMONS; i++)
+					if (monsters[i].m_lev.l_lev >= 0)
+						return i;
+				return MAXMONS;		/* only asmodeus is left */
+			}
 			i = rnd(MAXMONS);					/* pick ANY monster */
 			if (monsters[i].m_lev.l_lev < 0)	/* skip genocided ones */
 				continue;
