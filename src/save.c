@@ -119,8 +119,10 @@ save_game()
 	strcpy(file_name, buf);
 gotfile:
 	c = dosave();		/* try to save this game */
-	if (c == FALSE)
+	if (c == FALSE) {
+		setup();		/* catch the signals again */
 		msg("Could not save game to file %s", file_name);
+	}
 	return c;
 }
 
