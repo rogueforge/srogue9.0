@@ -6,6 +6,7 @@
  */
 
 #include <ctype.h>
+#include <errno.h>
 #include "rogue.h"
 #include "rogue.ext"
 
@@ -140,10 +141,14 @@ char ch;
 readchar()
 {
 	char c;
+	reg int cnt = 0;
 
 	fflush(stdout);
-	while (read(0, &c, 1) < 0)
-		continue;
+	for (errno = 0; read(0, &c, 1) <= 0; errno = 0)
+		if (errno == EINTR)
+			continue;
+		else if (cnt++ > 100)	/* if we are getting infinite EOFs */
+			auto_save();		/* save the game */
 	return c;
 }
 
