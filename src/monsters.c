@@ -194,6 +194,7 @@ wanderer()
 	do {
 		if (cnt++ >= 500)
 			return;
+		ch = ' ';
 		rp = &rooms[rnd_room()];
 		if (rp != hr || levtype == MAZELEV) {
 			mp = *rnd_pos(rp);
