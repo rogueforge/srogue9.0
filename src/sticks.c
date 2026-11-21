@@ -255,7 +255,8 @@ bool gotdir;
 					tp->t_pos.y = hero.y + delta.y;
 					tp->t_pos.x = hero.x + delta.x;
 				}
-				if (isalpha(mvwinch(cw, y, x)))
+				if (isalpha(mvwinch(cw, y, x))
+				  || mvwinch(cw, y, x) == tp->t_disguise)
 					mvwaddch(cw, y, x, tp->t_oldch);
 				tp->t_dest = &hero;
 				tp->t_flags |= ISRUN;
