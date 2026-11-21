@@ -125,6 +125,7 @@ int dy, dx;
 	ch = winat(nh.y, nh.x);
 	if (pl_on(ISHELD) && ch != 'F' && ch != 'd') {
 		msg("You are being held.");
+		running = FALSE;
 		return;
 	}
 	if (pl_off(ISETHER)) {
