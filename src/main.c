@@ -8,6 +8,8 @@
 
 #include <stdio.h>
 #include <signal.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <pwd.h>
 #include "rogue.h"
 
@@ -270,12 +272,20 @@ char *s;
 open_score()
 {
 	reg int i;
+	struct stat sbuf, sbuf2;
 
 	while ((i = open("/dev/null", 2)) >= 0 && i < 3)
 		continue;
 	if (i >= 3)
 		close(i);
-	scorefd = open(scorefile, 2);
+	if (lstat(scorefile, &sbuf) < 0 || (sbuf.st_mode & S_IFMT) != S_IFREG
+	  || sbuf.st_nlink != 1)
+		scorefd = -1;
+	else if ((scorefd = open(scorefile, 2)) >= 0 && (fstat(scorefd, &sbuf2) < 0
+	  || sbuf2.st_dev != sbuf.st_dev || sbuf2.st_ino != sbuf.st_ino)) {
+		close(scorefd);
+		scorefd = -1;
+	}
 	if ((setregid(playgid, playgid) < 0 || setreuid(playuid, playuid) < 0)
 	  && (getegid() != playgid || geteuid() != playuid)) {
 		perror("srogue");
