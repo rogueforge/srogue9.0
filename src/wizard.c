@@ -57,7 +57,7 @@ struct linked_list *what;
 			}
 	}
 	if (what == NULL)
-		msg(inv_name(obj, FALSE));
+		msg("%s", inv_name(obj, FALSE));
 }
 
 
