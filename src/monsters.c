@@ -321,6 +321,8 @@ tryagain:
 		if (mp->t_type == c)
 			remove_mon(&mp->t_pos, ip);
 	}
+	if (pl_on(ISHELD))
+		unhold(c);						/* nothing holds him now */
 	mm->m_lev.l_lev = -1;				/* get rid of it */
 	mm->m_lev.h_lev = -1;
 	lev_mon();							/* redo monster list */
