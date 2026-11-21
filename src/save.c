@@ -132,6 +132,8 @@ gotfile:
  */
 auto_save()
 {
+	if (him->s_hpt <= 0)
+		file_name[0] = NULL;
 	dosave();		/* save this game */
 	byebye(1);		/* so long for now */
 }

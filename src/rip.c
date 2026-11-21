@@ -112,6 +112,7 @@ int amount, aflag;
 	reg FILE *outf;
 	char *packend;
 
+	file_name[0] = NULL;
 	signal(SIGINT, byebye);
 	signal(SIGQUIT, byebye);
 	if (aflag != WINNER) {
