@@ -51,6 +51,8 @@ int ydelta, xdelta;
 	 */
 	if (obj->o_count < 2) {
 		detach(pack, item);
+		if (obj->o_type == AMULET)
+			amulet = FALSE;
 	}
 	else {
 		obj->o_count--;

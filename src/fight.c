@@ -238,6 +238,8 @@ struct thing *mp;
 								mp = NULL;
 							}
 							msg("She stole %s!", inv_name(sobj, TRUE));
+							if (sobj->o_type == AMULET)
+								amulet = FALSE;
 							detach(pack, steal);
 							discard(steal);
 							cur_null(sobj);
