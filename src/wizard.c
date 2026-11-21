@@ -345,7 +345,7 @@ passwd()
 		sp = buf;
 	else if (c == erasechar() && sp > buf)
 		sp--;
-	else
+	else if (sp < &buf[LINLEN - 1])
 		*sp++ = c;
 	if (sp == buf)
 		passok = FALSE;
