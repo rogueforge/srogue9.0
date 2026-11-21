@@ -51,7 +51,7 @@ char **envp;
 
 	/* check for print-score option */
 
-	strcpy(scorefile, SCOREFILE);
+	strncpy(scorefile, SCOREFILE, MAXPATH - 1);
 
 	if(argc >= 2 && strcmp(argv[1], "-s") == 0)
 	{
@@ -83,11 +83,12 @@ char **envp;
 	/* get home and options from environment */
 
 	if ((env = getenv("HOME")) != NULL)
-		strcpy(home, env);
+		strncpy(home, env, MAXPATH - LINLEN - 1);
 	else if ((pw = getpwuid(playuid)) != NULL)
-		strcpy(home, pw->pw_dir);
+		strncpy(home, pw->pw_dir, MAXPATH - LINLEN - 1);
 	else
 		home[0] = NULL;
+	home[MAXPATH - LINLEN - 1] = NULL;
 
 	strcat(home, "/");
 	strcpy(file_name, home);

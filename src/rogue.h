@@ -11,6 +11,7 @@
 
 #include <ctype.h>
 #include <stdarg.h>
+#include <limits.h>
 #include <curses.h>
 
 #ifndef reg
@@ -643,6 +644,7 @@ struct object {
 extern WINDOW *cw, *hw, *mw;
 
 #define LINLEN	80			/* length of buffers */
+#define MAXPATH	PATH_MAX	/* maximum length of a file name */
 #define MAXLINES	128		/* most screen lines a saved game holds */
 #define MAXCOLS		256		/* most screen columns a saved game holds */
 

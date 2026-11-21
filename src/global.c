@@ -52,10 +52,10 @@ char curpurch[15];			/* name of item ready to buy */
 char prbuf[LINLEN];			/* Buffer for sprintfs */
 char whoami[LINLEN];		/* Name of player */
 char fruit[LINLEN];			/* Favorite fruit */
-char huh[LINLEN];			/* The last message printed */
-char file_name[LINLEN];		/* Save file name */
-char scorefile[LINLEN];		/* place for scorefile */
-char home[LINLEN];			/* User's home directory */
+char huh[BUFSIZ];			/* The last message printed */
+char file_name[MAXPATH];	/* Save file name */
+char scorefile[MAXPATH];	/* place for scorefile */
+char home[MAXPATH];			/* User's home directory */
 char outbuf[BUFSIZ];		/* Output buffer for stdout */
 
 char *s_guess[MAXSCROLLS];		/* his guess at what scroll is */

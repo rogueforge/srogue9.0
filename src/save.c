@@ -361,7 +361,7 @@ char *file, **envp;
 		setterm(Def_term);
 */
 
-	strcpy(file_name, file);
+	strncpy(file_name, file, MAXPATH - 1);
 	setup();
 	restscr(cw);
 	srand48(getpid());

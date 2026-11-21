@@ -128,7 +128,7 @@ WINDOW *awin;
 		else if (sp == buf) {
 			if (c == CTRLB)			/* CTRL - B */
 				break;
-			if (c == '~') {
+			if (c == '~' && strlen(home) < 50) {
 				strcpy(buf, home);
 				waddstr(awin, home);
 				sp += strlen(home);
@@ -179,7 +179,7 @@ char *str;
 	
 				for (str = sp + 1; *str == '='; str++)
 					continue;
-				if (*str == '~') {
+				if (*str == '~' && op->o_opt == file_name) {
 					strcpy(op->o_opt, home);
 					start = op->o_opt + strlen(home);
 					while (*++str == '/')
