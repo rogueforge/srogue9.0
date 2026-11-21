@@ -223,7 +223,7 @@ command()
 					when CTRL('I') :	inventory(lvl_obj, 1);
 					when CTRL('W') :	whatis(NULL);
 					when CTRL('D') :	level++; new_level(NORMLEV);
-					when CTRL('U') :	level--; new_level(NORMLEV);
+					when CTRL('U') :	level -= level > 1; new_level(NORMLEV);
 					when CTRL('F') :	displevl();
 					when CTRL('X') :	dispmons();
 					when CTRL('T') :	teleport(rndspot,&player);
