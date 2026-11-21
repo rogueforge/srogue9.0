@@ -246,6 +246,7 @@ char *name;
 struct magic_item *magic;
 {
 	struct magic_item *mg;
+	int ch;
 
 	for (mg = magic; mg->mi_name != NULL; mg++)
 		;
@@ -256,7 +257,7 @@ struct magic_item *magic;
 		printf("%4d%% %s\n", mg->mi_prob, mg->mi_name);
 	printf("%s", retstr);
 	fflush(stdout);
-	while (getchar() != '\n')
+	while ((ch = getchar()) != '\n' && ch != EOF)
 		continue;
 }
 
