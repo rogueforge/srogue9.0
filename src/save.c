@@ -94,9 +94,10 @@ save_game()
 {
 	reg FILE *savef;
 	reg int c;
-	char buf[LINLEN];
+	char buf[LINLEN], oname[MAXPATH];
 
 	mpos = 0;
+	strcpy(oname, file_name);
 	if (file_name[0] != NULL) {
 		msg("Save file (%s)? ", file_name);
 		do {
@@ -123,6 +124,7 @@ gotfile:
 	if (c == FALSE) {
 		setup();		/* catch the signals again */
 		msg("Could not save game to file %s", file_name);
+		strcpy(file_name, oname);
 	}
 	return c;
 }
