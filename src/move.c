@@ -480,7 +480,7 @@ goner:
 					msg("The %s drowns !!", stuckee);
 				goto goner;
 			}
-			if ((trp->tr_flags & ISGONE) && rnd(100) < 10) {
+			if (ishero && (trp->tr_flags & ISGONE) && rnd(100) < 10) {
 				nlmove = TRUE;
 				if (rnd(100) < 15)
 					teleport(rndspot, th);	   /* teleport away */
