@@ -19,6 +19,7 @@ command()
 {
 	reg char ch;
 	reg int ntimes = 1;		/* Number of player moves */
+	bool took = TRUE;		/* last pass took time */
 	static char countch, direction, newcount = FALSE;
 
 	if (pl_on(ISHASTE))
@@ -27,7 +28,10 @@ command()
 	 * Let the daemons start up
 	 */
 	while (ntimes-- > 0) {
-		do_daemons(BEFORE);
+		if (took)
+			do_daemons(BEFORE);
+		else
+			status(FALSE);
 		look(TRUE);
 		if (!running)
 			door_stop = FALSE;
@@ -323,6 +327,7 @@ command()
 			door_stop = FALSE;
 		if (!after)
 			ntimes++;
+		took = after;
 	}
 	/*
 	 * Kick off the rest if the daemons and fuses
