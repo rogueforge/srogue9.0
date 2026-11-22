@@ -201,6 +201,8 @@ bool fscr;
 	item = new_thing(FALSE, newitem, newtype);
 	obj = OBJPTR(item);
 	wh = obj->o_type;
+	if (!wizard && wh == SCROLL && obj->o_which == S_MAKEIT)
+		obj->o_count = 1;			/* no more creation than was used */
 	if (wh == WEAPON || wh == ARMOR || wh == RING) {
 		if (fscr)					/* users get +3 to -3 */
 			ch = rnd(7) - 3;
